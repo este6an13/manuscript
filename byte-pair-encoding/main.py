@@ -9,11 +9,6 @@ def get_stats(ids):
     return stats
 
 
-# ids = [1, 2, 3]
-# stats = get_stats(ids)
-# print(stats)
-
-
 def merge(ids, pair, idx):
     new_ids = []
     i = 0
@@ -30,11 +25,6 @@ def merge(ids, pair, idx):
             new_ids.append(ids[i])
             i += 1
     return new_ids
-
-
-# ids = [1, 2, 3, 1, 2, 3]
-# merged = merge(ids, (1, 2), 9)
-# print(merged)
 
 
 def train(text, vocab_size):
@@ -54,11 +44,6 @@ def train(text, vocab_size):
         merges[most_freq_pair] = token
         token += 1
     return merges
-
-
-# text = "hello"
-# _bytes = list(text.encode("utf-8"))
-# print(_bytes)
 
 
 def encode(text, merges):
@@ -96,10 +81,23 @@ def decode(encoding, merges):
     return text
 
 
-text = "hello world! 🚀 こんにちは"
-merges = train(text, 300)
-encoding = encode(text, merges)
-print(encoding)
+if __name__ == "__main__":
+    # ids = [1, 2, 3]
+    # stats = get_stats(ids)
+    # print(stats)
 
-decoding = decode(encoding, merges)
-print(decoding)
+    # ids = [1, 2, 3, 1, 2, 3]
+    # merged = merge(ids, (1, 2), 9)
+    # print(merged)
+
+    # text = "hello"
+    # _bytes = list(text.encode("utf-8"))
+    # print(_bytes)
+
+    text = "hello world! 🚀 こんにちは"
+    merges = train(text, 300)
+    encoding = encode(text, merges)
+    print(encoding)
+
+    decoding = decode(encoding, merges)
+    print(decoding)

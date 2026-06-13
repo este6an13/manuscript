@@ -33,7 +33,7 @@ def train(text, vocab_size):
     token = 256
     for _ in range(num_merges):
         stats = get_stats(encoding)
-        if len(stats) == 0:
+        if len(stats) == 0:  # if we get one token: [256] for example
             break
         most_freq_pair = max(stats, key=stats.get)
         freq = stats[most_freq_pair]

@@ -1,0 +1,901 @@
+/* ============================================================
+   MANUSCRIPT.CSS — An Illuminated Codex Theme
+   ============================================================
+   Styles for presenting Python algorithms as pages of an
+   ancient scholarly manuscript / illuminated medieval codex.
+   ============================================================ */
+
+/* --- Custom Properties: Light Theme (default) --- */
+:root {
+  /* Parchment tones */
+  --parchment: #F4E8C1;
+  --parchment-light: #FAF3E0;
+  --parchment-dark: #E8D5A3;
+
+  /* Ink tones */
+  --ink: #2C1810;
+  --ink-light: #4A3728;
+  --ink-faded: #8B7355;
+
+  /* Accent colors */
+  --rubric: #8B3A3A;
+  --gold: #B8860B;
+  --gold-bright: #DAA520;
+  --blue: #2E5A7E;
+
+  /* Code background */
+  --code-bg: #EFE3BF;
+
+  /* Syntax highlighting */
+  --code-keyword: #8B3A3A;
+  --code-string: #2E5A4B;
+  --code-comment: #8B7355;
+  --code-number: #7B6427;
+  --code-builtin: #2E4057;
+  --code-decorator: #6B4C7A;
+  --code-function: #4A2C1A;
+  --code-self: #5A4A3A;
+
+  /* Typography */
+  --font-body: 'Cormorant Garamond', 'Georgia', serif;
+  --font-heading: 'Cinzel', serif;
+  --font-decorative: 'Cinzel Decorative', serif;
+  --font-code: 'JetBrains Mono', monospace;
+  --font-annotation: 'Caveat', cursive;
+
+  /* Transitions */
+  --transition-speed: 0.3s;
+}
+
+/* --- Custom Properties: Dark Theme --- */
+[data-theme="dark"] {
+  --parchment: #1A1209;
+  --parchment-light: #231A0F;
+  --parchment-dark: #100C06;
+
+  --ink: #D4C5A0;
+  --ink-light: #B8A88A;
+  --ink-faded: #8B7D64;
+
+  --rubric: #C47070;
+  --gold: #DAA520;
+  --gold-bright: #E8C547;
+  --blue: #6B9BD2;
+
+  --code-bg: #16120B;
+
+  --code-keyword: #C47070;
+  --code-string: #6BAF8D;
+  --code-comment: #8B7D64;
+  --code-number: #C4A94E;
+  --code-builtin: #7BA4C7;
+  --code-decorator: #A98ABF;
+  --code-function: #D4A574;
+  --code-self: #B8A88A;
+}
+
+/* --- Reset & Base --- */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body.manuscript-page {
+  background: #2b1d14; /* Dark wood table color */
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.7;
+  min-height: 100vh;
+  transition: background var(--transition-speed), color var(--transition-speed);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="dark"] body.manuscript-page {
+  background: #120c08; /* Even darker wood for dark mode */
+}
+
+a {
+  color: var(--blue);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+a:hover {
+  color: var(--rubric);
+}
+
+/* --- Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--parchment-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ink-faded);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-light);
+}
+
+/* --- Selection --- */
+::selection {
+  background: rgba(184, 134, 11, 0.3);
+  color: var(--rubric);
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+nav.manuscript-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  background: rgba(244, 232, 193, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(184, 134, 11, 0.2);
+  transition: background var(--transition-speed);
+}
+
+[data-theme="dark"] nav.manuscript-nav {
+  background: rgba(26, 18, 9, 0.88);
+  border-bottom-color: rgba(218, 165, 32, 0.15);
+}
+
+.nav-home {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink-faded);
+  text-decoration: none;
+  transition: color var(--transition-speed);
+}
+
+.nav-home:hover {
+  color: var(--gold);
+}
+
+.nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* --- Theme Toggle --- */
+button.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink-faded);
+  background: transparent;
+  color: var(--ink-faded);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease, border-color var(--transition-speed), color var(--transition-speed);
+}
+
+button.theme-toggle:hover {
+  transform: scale(1.1);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+[data-theme="light"] .theme-icon-dark {
+  display: none;
+}
+
+[data-theme="dark"] .theme-icon-light {
+  display: none;
+}
+
+/* ============================================================
+   CODEX — The Main Manuscript Page
+   ============================================================ */
+article.codex {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 4.5rem 3.5rem;
+  position: relative;
+
+  /* Parchment background with layered paper-fiber texture */
+  background:
+    /* Subtle vertical fiber lines */
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 3px,
+      rgba(139, 115, 85, 0.02) 3px,
+      rgba(139, 115, 85, 0.02) 4px
+    ),
+    /* Subtle horizontal fiber lines */
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 5px,
+      rgba(139, 115, 85, 0.015) 5px,
+      rgba(139, 115, 85, 0.015) 6px
+    ),
+    /* Warm radial glow for center of page */
+    radial-gradient(
+      ellipse at 50% 30%,
+      var(--parchment-light) 0%,
+      var(--parchment) 60%,
+      var(--parchment-dark) 100%
+    );
+  background-color: var(--parchment);
+
+  /* Depth and worn-edge shadow */
+  box-shadow:
+    0 1px 4px rgba(0, 0, 0, 0.12),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 12px 40px rgba(0, 0, 0, 0.06),
+    inset 0 0 60px rgba(139, 115, 85, 0.06);
+
+  transition: background var(--transition-speed), box-shadow var(--transition-speed);
+
+  /* Entry animation: start hidden */
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+article.codex.codex-visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.8s ease,
+    transform 0.8s ease,
+    background var(--transition-speed),
+    box-shadow var(--transition-speed);
+}
+
+/* Vignette overlay for aged-page feel */
+article.codex::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 55%,
+    rgba(44, 24, 16, 0.05) 100%
+  );
+}
+
+[data-theme="dark"] article.codex::after {
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+}
+
+/* --- Codex Decorative Borders --- */
+.codex-border-top,
+.codex-border-bottom {
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--gold) 20%,
+    var(--rubric) 50%,
+    var(--gold) 80%,
+    transparent 100%
+  );
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
+.codex-border-top {
+  margin-bottom: 2.5rem;
+}
+
+.codex-border-bottom {
+  margin-top: 2.5rem;
+}
+
+/* ============================================================
+   CODEX HEADER
+   ============================================================ */
+.codex-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.chapter-numeral {
+  display: block;
+  font-family: var(--font-heading);
+  font-variant: small-caps;
+  letter-spacing: 0.3em;
+  color: var(--ink-faded);
+  font-size: 0.85rem;
+  margin-bottom: 0.5rem;
+  transition: color var(--transition-speed);
+}
+
+.codex-title {
+  font-family: var(--font-decorative);
+  font-size: 2.5rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+  transition: color var(--transition-speed);
+}
+
+.codex-subtitle {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink-faded);
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   CODEX INTRODUCTION — Prose Content
+   ============================================================ */
+.codex-introduction {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--ink);
+  transition: color var(--transition-speed);
+}
+
+.codex-introduction h2 {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  letter-spacing: 0.1em;
+  margin: 2rem 0 1rem;
+  color: var(--ink);
+}
+
+.codex-introduction h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  letter-spacing: 0.08em;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--ink-light);
+}
+
+.codex-introduction p {
+  margin-bottom: 1rem;
+}
+
+.codex-introduction ul,
+.codex-introduction ol {
+  margin: 0.75rem 0 1rem 1.5rem;
+}
+
+.codex-introduction li {
+  margin-bottom: 0.35rem;
+}
+
+.codex-introduction code {
+  font-family: var(--font-code);
+  font-size: 0.88em;
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 2px;
+  color: var(--ink-light);
+  transition: background var(--transition-speed), color var(--transition-speed);
+}
+
+.codex-introduction pre {
+  background: var(--code-bg);
+  border: 1px solid rgba(44, 24, 16, 0.1);
+  border-radius: 2px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.codex-introduction pre code {
+  background: none;
+  padding: 0;
+}
+
+.codex-introduction table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 1rem;
+}
+
+.codex-introduction th,
+.codex-introduction td {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--ink-faded);
+  text-align: left;
+}
+
+.codex-introduction th {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
+  background: rgba(184, 134, 11, 0.08);
+  color: var(--ink);
+}
+
+.codex-introduction blockquote {
+  margin: 1rem 0;
+  padding: 0.75rem 1.25rem;
+  border-left: 3px solid var(--gold);
+  font-style: italic;
+  color: var(--ink-light);
+  background: rgba(184, 134, 11, 0.04);
+}
+
+.codex-introduction hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--ink-faded), transparent);
+  margin: 2rem 0;
+}
+
+/* ============================================================
+   CHAPTER & SECTION HEADINGS
+   ============================================================ */
+.chapter-heading {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  text-align: center;
+  letter-spacing: 0.15em;
+  color: var(--ink);
+  margin: 2.5rem 0 2rem;
+  position: relative;
+  padding-bottom: 1rem;
+  transition: color var(--transition-speed);
+}
+
+.chapter-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 1px;
+  background: var(--gold);
+}
+
+.codex-section {
+  margin-bottom: 3rem;
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.section-numeral {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  color: var(--rubric);
+  flex-shrink: 0;
+  transition: color var(--transition-speed);
+}
+
+.section-name {
+  font-family: var(--font-code);
+  font-size: 1.15rem;
+  color: var(--ink);
+  font-weight: 500;
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   SECTION CONTENT — Grid Layout with Margin Notes
+   ============================================================ */
+.section-content {
+  /* Default: single column */
+}
+
+.section-content.has-notes {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+/* ============================================================
+   CODE BLOCKS
+   ============================================================ */
+pre.code-block {
+  background: var(--code-bg);
+  border: 1px solid rgba(44, 24, 16, 0.1);
+  border-radius: 2px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: background var(--transition-speed), border-color var(--transition-speed);
+}
+
+[data-theme="dark"] pre.code-block {
+  border-color: rgba(212, 197, 160, 0.08);
+  box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+pre.code-block code {
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--ink);
+  transition: color var(--transition-speed);
+}
+
+/* --- Syntax Highlighting --- */
+.py-keyword {
+  color: var(--code-keyword);
+  font-weight: 500;
+}
+
+.py-string {
+  color: var(--code-string);
+}
+
+.py-comment {
+  color: var(--code-comment);
+  font-style: italic;
+}
+
+.py-number {
+  color: var(--code-number);
+}
+
+.py-builtin {
+  color: var(--code-builtin);
+}
+
+.py-decorator {
+  color: var(--code-decorator);
+}
+
+.py-function {
+  color: var(--code-function);
+  font-weight: 600;
+}
+
+.py-self {
+  color: var(--code-self);
+  font-style: italic;
+}
+
+/* --- Code Line Highlighting --- */
+.code-line {
+  display: inline-block;
+  width: 100%;
+  transition: background 0.2s ease;
+}
+
+.code-line:hover {
+  background: rgba(184, 134, 11, 0.07);
+  border-radius: 2px;
+}
+
+.code-line.line-highlight {
+  background: rgba(184, 134, 11, 0.15);
+  border-radius: 2px;
+}
+
+/* ============================================================
+   MARGIN NOTES
+   ============================================================ */
+aside.margin-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.margin-note {
+  font-family: var(--font-annotation);
+  font-size: 1.05rem;
+  color: var(--ink-faded);
+  padding: 0.5rem 0.75rem;
+  border-left: 2px solid var(--gold);
+  cursor: pointer;
+  transition: color var(--transition-speed), border-color var(--transition-speed);
+  line-height: 1.4;
+}
+
+.margin-note:hover {
+  color: var(--ink);
+  border-left-color: var(--rubric);
+}
+
+.margin-note.active {
+  color: var(--ink);
+  border-left-color: var(--rubric);
+}
+
+.note-line-ref {
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  color: var(--rubric);
+  margin-right: 0.5rem;
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   ORNAMENTAL ELEMENTS
+   ============================================================ */
+.ornamental-rule {
+  text-align: center;
+  color: var(--gold);
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+  margin: 1.5rem 0;
+  transition: color var(--transition-speed);
+}
+
+.ornamental-divider {
+  text-align: center;
+  color: var(--rubric);
+  font-size: 0.9rem;
+  letter-spacing: 1em;
+  margin: 3rem 0;
+  opacity: 0.6;
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   CODEX FOOTER
+   ============================================================ */
+.codex-footer {
+  text-align: center;
+  margin-top: 3rem;
+}
+
+.page-number {
+  font-family: var(--font-heading);
+  color: var(--ink-faded);
+  font-size: 0.9rem;
+  letter-spacing: 0.2em;
+  transition: color var(--transition-speed);
+}
+
+.site-copyright {
+  text-align: center;
+  font-family: var(--font-heading);
+  color: var(--ink-faded);
+  font-size: 0.8rem;
+  padding-bottom: 2rem;
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   INDEX PAGE
+   ============================================================ */
+.index-title {
+  font-family: var(--font-decorative);
+  font-size: 3.5rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-align: center;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  transition: color var(--transition-speed);
+}
+
+.index-epigraph {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink-faded);
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.7;
+  transition: color var(--transition-speed);
+}
+
+.title-decoration {
+  text-align: center;
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 2rem;
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   TABLE OF CONTENTS
+   ============================================================ */
+.toc-list {
+  list-style: none;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.toc-list li {
+  margin-bottom: 0.75rem;
+}
+
+.toc-link {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  text-decoration: none;
+  color: var(--ink);
+  transition: color var(--transition-speed);
+}
+
+.toc-link:hover {
+  color: var(--rubric);
+}
+
+.toc-link:hover .toc-numeral {
+  color: var(--gold);
+}
+
+.toc-link:hover .toc-dots {
+  border-bottom-color: var(--rubric);
+}
+
+.toc-numeral {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  color: var(--rubric);
+  flex-shrink: 0;
+  transition: color var(--transition-speed);
+}
+
+.toc-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  transition: color var(--transition-speed);
+}
+
+.toc-dots {
+  flex: 1;
+  border-bottom: 1px dotted var(--ink-faded);
+  margin-bottom: 0.25em;
+  min-width: 1rem;
+  transition: border-color var(--transition-speed);
+}
+
+.toc-category {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--ink-faded);
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color var(--transition-speed);
+}
+
+.toc-description {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink-faded);
+  margin-left: 2.5rem;
+  line-height: 1.5;
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   PHILOSOPHY LIST
+   ============================================================ */
+.philosophy-list li {
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.8;
+  margin-bottom: 0.75rem;
+}
+
+/* ============================================================
+   MATH
+   ============================================================ */
+.math {
+  font-family: var(--font-body);
+  font-style: italic;
+  color: var(--rubric);
+  transition: color var(--transition-speed);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .section-content.has-notes {
+    grid-template-columns: 1fr;
+  }
+
+  aside.margin-notes {
+    border-left: 2px solid var(--gold);
+    padding-left: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Remove individual note left-borders when stacked */
+  aside.margin-notes .margin-note {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  article.codex {
+    padding: 3rem 2rem;
+    margin: 1.5rem 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .codex-title {
+    font-size: 1.75rem;
+  }
+
+  .index-title {
+    font-size: 2.25rem;
+  }
+
+  article.codex {
+    padding: 2rem 1.25rem;
+    margin: 1rem 0.5rem;
+  }
+
+  nav.manuscript-nav {
+    padding: 0.5rem 1rem;
+  }
+
+  .chapter-heading {
+    font-size: 1.2rem;
+  }
+
+  .codex-introduction {
+    font-size: 1rem;
+  }
+
+  pre.code-block {
+    padding: 1rem;
+    font-size: 0.8rem;
+  }
+
+  .toc-title {
+    font-size: 1rem;
+  }
+}
+
+/* ============================================================
+   PRINT STYLES
+   ============================================================ */
+@media print {
+  body.manuscript-page {
+    background: white;
+  }
+
+  nav.manuscript-nav {
+    display: none;
+  }
+
+  article.codex {
+    box-shadow: none;
+    margin: 0;
+    padding: 2rem;
+    max-width: 100%;
+  }
+
+  article.codex::after {
+    display: none;
+  }
+}

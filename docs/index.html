@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuscript</title>
+    <link rel="icon" type="image/png" href="img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/manuscript.css">
+</head>
+<body class="manuscript-page manuscript-index">
+    <nav class="manuscript-nav">
+        <a href="index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">🕯️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header index-header">
+            <div class="title-decoration">✦</div>
+            <h1 class="codex-title index-title">Manuscript</h1>
+            <p class="index-epigraph">&ldquo;These pages were written not to produce machines, but to instruct the mind.&rdquo;</p>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+        <section class="index-toc">
+            <h2 class="chapter-heading">Table of Contents</h2>
+            <ol class="toc-list">
+                <li class="toc-entry">
+                    <a href="pages/byte-pair-encoding.html" class="toc-link">
+                        <span class="toc-numeral">I.</span>
+                        <span class="toc-title">Byte Pair Encoding (BPE)</span>
+                    </a>
+                </li>
+            </ol>
+        </section>
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="js/manuscript.js"></script>
+</body>
+</html>

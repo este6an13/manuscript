@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Byte Pair Encoding (BPE) — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">🕯️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter I</div>
+            <h1 class="codex-title">Byte Pair Encoding (BPE)</h1>
+            <div class="codex-subtitle">NLP / Tokenization</div>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-get_stats">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">get_stats</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-get_stats">def get_stats(ids):
+    stats = {}
+    for i in range(len(ids) - 1):
+        pair = (ids[i], ids[i + 1])
+        if stats.get(pair) is None:
+            stats[pair] = 1
+        else:
+            stats[pair] += 1
+    return stats
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-merge">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">merge</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-merge">def merge(ids, pair, idx):
+    new_ids = []
+    i = 0
+    while i &lt; len(ids):
+        if i + 1 == len(ids):
+            new_ids.append(ids[i])
+            break
+        curr = (ids[i], ids[i + 1])
+        if curr == pair:
+            new_ids.append(idx)
+            i += 2
+        else:
+            new_ids.append(ids[i])
+            i += 1
+    return new_ids
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-train">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">train</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-train">def train(text, vocab_size):
+    num_merges = vocab_size - 256  # num of merged to make to reach vocab size
+    merges = {}
+    encoding = list(text.encode(&quot;utf-8&quot;))
+    token = 256
+    for _ in range(num_merges):
+        stats = get_stats(encoding)
+        if len(stats) == 0:  # if we get one token: [256] for example
+            break
+        most_freq_pair = max(stats, key=stats.get)
+        freq = stats[most_freq_pair]
+        if freq == 0:
+            continue
+        encoding = merge(encoding, most_freq_pair, token)
+        merges[most_freq_pair] = token
+        token += 1
+    return merges
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-train">
+                        <div class="margin-note" data-line="2" data-absolute-line="30">
+                            <span class="note-line-ref">l.30</span>
+                            <span class="note-text">num of merged to make to reach vocab size</span>
+                        </div>
+                        <div class="margin-note" data-line="8" data-absolute-line="36">
+                            <span class="note-line-ref">l.36</span>
+                            <span class="note-text">if we get one token: [256] for example</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-encode">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">encode</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-encode">def encode(text, merges):
+    encoding = list(text.encode(&quot;utf-8&quot;))
+    while len(encoding) &gt;= 2:
+        stats = get_stats(encoding)
+        # find the lowest merge rank
+        # the pair that was merged earliest during training,
+        # which has the smallest token ID
+        min_rank = float(&quot;inf&quot;)
+        min_p = None
+        # find the pair p in stats that minimizes merges.get(p, float(&#x27;inf&#x27;))
+        for p, _ in stats.items():
+            rank = merges.get(p, float(&quot;inf&quot;))
+            if rank &lt;= min_rank:
+                min_rank = rank
+                min_p = p
+        best_pair = min_p
+        if min_rank == float(&quot;inf&quot;):
+            break
+        encoding = merge(encoding, best_pair, merges[best_pair])
+    return encoding
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-encode">
+                        <div class="margin-note" data-line="5" data-absolute-line="52">
+                            <span class="note-line-ref">l.52</span>
+                            <span class="note-text">find the lowest merge rank</span>
+                        </div>
+                        <div class="margin-note" data-line="6" data-absolute-line="53">
+                            <span class="note-line-ref">l.53</span>
+                            <span class="note-text">the pair that was merged earliest during training,</span>
+                        </div>
+                        <div class="margin-note" data-line="7" data-absolute-line="54">
+                            <span class="note-line-ref">l.54</span>
+                            <span class="note-text">which has the smallest token ID</span>
+                        </div>
+                        <div class="margin-note" data-line="10" data-absolute-line="57">
+                            <span class="note-line-ref">l.57</span>
+                            <span class="note-text">find the pair p in stats that minimizes merges.get(p, float(&#x27;inf&#x27;))</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-decode">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">decode</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-decode">def decode(encoding, merges):
+    vocab = {i: bytes([i]) for i in range(256)}
+    sorted_merges = sorted(merges.items(), key=lambda item: item[1])
+    for pair, idx in sorted_merges:
+        vocab[idx] = (
+            vocab[pair[0]] + vocab[pair[1]]
+        )  # (97, 98): 256 -&gt; vocab[256] -&gt; b&#x27;\x97\x98&#x27;
+    bytes_arr = []
+    for idx in encoding:
+        bytes_arr.append(
+            vocab.get(idx, b&quot;*&quot;)
+        )  # deliberate placeholder for this particular exercise
+    bytes_str = b&quot;&quot;.join(bytes_arr)
+    text = bytes_str.decode(&quot;utf-8&quot;, errors=&quot;replace&quot;)
+    return text
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-decode">
+                        <div class="margin-note" data-line="7" data-absolute-line="76">
+                            <span class="note-line-ref">l.76</span>
+                            <span class="note-text">(97, 98): 256 -&gt; vocab[256] -&gt; b&#x27;\x97\x98&#x27;</span>
+                        </div>
+                        <div class="margin-note" data-line="12" data-absolute-line="81">
+                            <span class="note-line-ref">l.81</span>
+                            <span class="note-text">deliberate placeholder for this particular exercise</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-__main__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VI</span>
+                    <span class="section-name">Demonstration</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-__main__">if __name__ == &quot;__main__&quot;:
+    # ids = [1, 2, 3]
+    # stats = get_stats(ids)
+    # print(stats)
+
+    # ids = [1, 2, 3, 1, 2, 3]
+    # merged = merge(ids, (1, 2), 9)
+    # print(merged)
+
+    # text = &quot;hello&quot;
+    # _bytes = list(text.encode(&quot;utf-8&quot;))
+    # print(_bytes)
+
+    text = &quot;hello world! 🚀 こんにちは&quot;
+    merges = train(text, 300)
+    encoding = encode(text, merges)
+    print(encoding)
+
+    decoding = decode(encoding, merges)
+    print(decoding)
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-__main__">
+                        <div class="margin-note" data-line="2" data-absolute-line="88">
+                            <span class="note-line-ref">l.88</span>
+                            <span class="note-text">ids = [1, 2, 3]</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="89">
+                            <span class="note-line-ref">l.89</span>
+                            <span class="note-text">stats = get_stats(ids)</span>
+                        </div>
+                        <div class="margin-note" data-line="4" data-absolute-line="90">
+                            <span class="note-line-ref">l.90</span>
+                            <span class="note-text">print(stats)</span>
+                        </div>
+                        <div class="margin-note" data-line="6" data-absolute-line="92">
+                            <span class="note-line-ref">l.92</span>
+                            <span class="note-text">ids = [1, 2, 3, 1, 2, 3]</span>
+                        </div>
+                        <div class="margin-note" data-line="7" data-absolute-line="93">
+                            <span class="note-line-ref">l.93</span>
+                            <span class="note-text">merged = merge(ids, (1, 2), 9)</span>
+                        </div>
+                        <div class="margin-note" data-line="8" data-absolute-line="94">
+                            <span class="note-line-ref">l.94</span>
+                            <span class="note-text">print(merged)</span>
+                        </div>
+                        <div class="margin-note" data-line="10" data-absolute-line="96">
+                            <span class="note-line-ref">l.96</span>
+                            <span class="note-text">text = &quot;hello&quot;</span>
+                        </div>
+                        <div class="margin-note" data-line="11" data-absolute-line="97">
+                            <span class="note-line-ref">l.97</span>
+                            <span class="note-text">_bytes = list(text.encode(&quot;utf-8&quot;))</span>
+                        </div>
+                        <div class="margin-note" data-line="12" data-absolute-line="98">
+                            <span class="note-line-ref">l.98</span>
+                            <span class="note-text">print(_bytes)</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <div class="ornamental-divider">✦ ✦ ✦</div>
+        <section class="codex-chapter" id="verification">
+            <h2 class="chapter-heading">Verification Appendix</h2>
+
+            <section class="codex-section" id="test-TestGetStats">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">TestGetStats</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestGetStats">class TestGetStats(unittest.TestCase):
+    def test(self):
+        tests = {
+            &quot;given_empty_list_return_empty_stats&quot;: {&quot;ids&quot;: [], &quot;want&quot;: {}},
+            &quot;given_one_token_list_return_empty_stats&quot;: {&quot;ids&quot;: [1], &quot;want&quot;: {}},
+            &quot;given_list_return_stats_0&quot;: {
+                &quot;ids&quot;: [1, 2, 3],
+                &quot;want&quot;: {(1, 2): 1, (2, 3): 1},
+            },
+            &quot;given_list_return_stats_1&quot;: {
+                &quot;ids&quot;: [1, 2, 1, 2],
+                &quot;want&quot;: {(1, 2): 2, (2, 1): 1},
+            },
+            &quot;given_single_valued_list_return_one_pair&quot;: {
+                &quot;ids&quot;: [1, 1, 1, 1, 1],
+                &quot;want&quot;: {(1, 1): 4},
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(get_stats(case[&quot;ids&quot;]), case[&quot;want&quot;])
+</code></pre>
+                </div>
+            </section>
+            <section class="codex-section" id="test-TestMerge">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">TestMerge</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestMerge">class TestMerge(unittest.TestCase):
+    def test(self):
+        tests = {
+            &quot;given_empty_ids_return_empty&quot;: {
+                &quot;ids&quot;: [],
+                &quot;pair&quot;: (1, 2),
+                &quot;idx&quot;: 0,
+                &quot;want&quot;: [],
+            },
+            &quot;given_one_id_return_one_id&quot;: {
+                &quot;ids&quot;: [1],
+                &quot;pair&quot;: (1, 2),
+                &quot;idx&quot;: 0,
+                &quot;want&quot;: [1],
+            },
+            &quot;given_one_pair_return_one_id&quot;: {
+                &quot;ids&quot;: [1, 2],
+                &quot;pair&quot;: (1, 2),
+                &quot;idx&quot;: 0,
+                &quot;want&quot;: [0],
+            },
+            &quot;given_pairs_return_merged_list&quot;: {
+                &quot;ids&quot;: [1, 2, 1, 2],
+                &quot;pair&quot;: (2, 1),
+                &quot;idx&quot;: 0,
+                &quot;want&quot;: [1, 0, 2],
+            },
+            &quot;given_unmatched_pair_return_ids&quot;: {
+                &quot;ids&quot;: [1, 2, 3],
+                &quot;pair&quot;: (0, 0),
+                &quot;idx&quot;: 0,
+                &quot;want&quot;: [1, 2, 3],
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(
+                    merge(case[&quot;ids&quot;], case[&quot;pair&quot;], case[&quot;idx&quot;]), case[&quot;want&quot;]
+                )
+</code></pre>
+                </div>
+            </section>
+            <section class="codex-section" id="test-TestTrain">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">TestTrain</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestTrain">class TestTrain(unittest.TestCase):
+    def test(self):
+        tests = {
+            &quot;given_vocab_size_256_return_empty_merges&quot;: {
+                &quot;text&quot;: &quot;any text&quot;,
+                &quot;vocab_size&quot;: 256,
+                &quot;want&quot;: {},
+            },
+            &quot;given_empty_text_return empty_merges&quot;: {
+                &quot;text&quot;: &quot;&quot;,
+                &quot;vocab_size&quot;: 10000,
+                &quot;want&quot;: {},
+            },
+            &quot;given_one_token_text_return_empty_merges&quot;: {
+                &quot;text&quot;: &quot;a&quot;,  # 97
+                &quot;vocab_size&quot;: 10000,
+                &quot;want&quot;: {},  # no pairs to generate merges
+            },
+            &quot;given_one_pair_text_return_merges_with_one_entry&quot;: {
+                &quot;text&quot;: &quot;aa&quot;,
+                &quot;vocab_size&quot;: 10000,  # no matter vocab size, stopping cond. is [256]
+                &quot;want&quot;: {(97, 97): 256},
+            },
+            &quot;given_some_text_return_merges_0&quot;: {
+                &quot;text&quot;: &quot;aaa&quot;,
+                &quot;vocab_size&quot;: 10000,
+                &quot;want&quot;: {(97, 97): 256, (256, 97): 257},
+            },
+            &quot;given_some_text_return_merges_1&quot;: {
+                &quot;text&quot;: &quot;abc&quot;,
+                &quot;vocab_size&quot;: 10000,
+                &quot;want&quot;: {(97, 98): 256, (256, 99): 257},
+            },
+            &quot;given_some_text_return_merges_2&quot;: {
+                &quot;text&quot;: &quot;abcd&quot;,
+                &quot;vocab_size&quot;: 10000,
+                &quot;want&quot;: {(97, 98): 256, (256, 99): 257, (257, 100): 258},
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(train(case[&quot;text&quot;], case[&quot;vocab_size&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestTrain">
+                        <div class="margin-note" data-line="15" data-absolute-line="84">
+                            <span class="note-line-ref">l.84</span>
+                            <span class="note-text">97</span>
+                        </div>
+                        <div class="margin-note" data-line="17" data-absolute-line="86">
+                            <span class="note-line-ref">l.86</span>
+                            <span class="note-text">no pairs to generate merges</span>
+                        </div>
+                        <div class="margin-note" data-line="21" data-absolute-line="90">
+                            <span class="note-line-ref">l.90</span>
+                            <span class="note-text">no matter vocab size, stopping cond. is [256]</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+            <section class="codex-section" id="test-TestEncode">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">TestEncode</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestEncode">class TestEncode(unittest.TestCase):
+    def test(self):
+        tests = {
+            &quot;given_empty_text_return_empty_encoding&quot;: {
+                &quot;text&quot;: &quot;&quot;,
+                &quot;merges&quot;: {(1, 2): 256, (256, 3): 257},  # any merges
+                &quot;want&quot;: [],
+            },
+            &quot;given_one_token_text_return_one_token_encoding&quot;: {
+                &quot;text&quot;: &quot;a&quot;,
+                &quot;merges&quot;: {(1, 2): 256, (256, 3): 257},  # any merges
+                &quot;want&quot;: [97],
+            },
+            &quot;given_text_with_token_pair_not_in_merges_return_initial_encoding&quot;: {
+                &quot;text&quot;: &quot;aa&quot;,  # (97, 97) not in merges
+                &quot;merges&quot;: {(1, 2): 256, (256, 3): 257},
+                &quot;want&quot;: [97, 97],  # merges table is not used to encode
+            },
+            &quot;given_any_text_with_pairs_not_in_merges_return_initial_encoding&quot;: {
+                &quot;text&quot;: &quot;abcde&quot;,
+                &quot;merges&quot;: {(1, 2): 256, (256, 3): 257},
+                &quot;want&quot;: [97, 98, 99, 100, 101],  # merges table is not used to encode
+            },
+            &quot;given_text_with_some_pair_in_merges_return_encoding_using_merges_table&quot;: {
+                &quot;text&quot;: &quot;abc&quot;,  # [97, 98, 99]
+                &quot;merges&quot;: {(1, 2): 256, (98, 99): 257},
+                &quot;want&quot;: [97, 257],  # (98, 99) -&gt; 257
+            },
+            &quot;given_a_correct_merges_table_return_last_token_0&quot;: {
+                &quot;text&quot;: &quot;abc&quot;,
+                &quot;merges&quot;: {(97, 98): 256, (256, 99): 257},  # a correct merges table
+                &quot;want&quot;: [257],  # return last token
+            },
+            &quot;given_a_correct_merges_table_return_last_token_1&quot;: {
+                &quot;text&quot;: &quot;adbc&quot;,  # [97, 100, 98, 00]
+                &quot;merges&quot;: {
+                    (97, 100): 256,
+                    (256, 98): 257,
+                    (257, 99): 258,
+                },  # a correct merges table
+                &quot;want&quot;: [258],  # return last token
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(encode(case[&quot;text&quot;], case[&quot;merges&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestEncode">
+                        <div class="margin-note" data-line="6" data-absolute-line="119">
+                            <span class="note-line-ref">l.119</span>
+                            <span class="note-text">any merges</span>
+                        </div>
+                        <div class="margin-note" data-line="11" data-absolute-line="124">
+                            <span class="note-line-ref">l.124</span>
+                            <span class="note-text">any merges</span>
+                        </div>
+                        <div class="margin-note" data-line="15" data-absolute-line="128">
+                            <span class="note-line-ref">l.128</span>
+                            <span class="note-text">(97, 97) not in merges</span>
+                        </div>
+                        <div class="margin-note" data-line="17" data-absolute-line="130">
+                            <span class="note-line-ref">l.130</span>
+                            <span class="note-text">merges table is not used to encode</span>
+                        </div>
+                        <div class="margin-note" data-line="22" data-absolute-line="135">
+                            <span class="note-line-ref">l.135</span>
+                            <span class="note-text">merges table is not used to encode</span>
+                        </div>
+                        <div class="margin-note" data-line="25" data-absolute-line="138">
+                            <span class="note-line-ref">l.138</span>
+                            <span class="note-text">[97, 98, 99]</span>
+                        </div>
+                        <div class="margin-note" data-line="27" data-absolute-line="140">
+                            <span class="note-line-ref">l.140</span>
+                            <span class="note-text">(98, 99) -&gt; 257</span>
+                        </div>
+                        <div class="margin-note" data-line="31" data-absolute-line="144">
+                            <span class="note-line-ref">l.144</span>
+                            <span class="note-text">a correct merges table</span>
+                        </div>
+                        <div class="margin-note" data-line="32" data-absolute-line="145">
+                            <span class="note-line-ref">l.145</span>
+                            <span class="note-text">return last token</span>
+                        </div>
+                        <div class="margin-note" data-line="35" data-absolute-line="148">
+                            <span class="note-line-ref">l.148</span>
+                            <span class="note-text">[97, 100, 98, 00]</span>
+                        </div>
+                        <div class="margin-note" data-line="40" data-absolute-line="153">
+                            <span class="note-line-ref">l.153</span>
+                            <span class="note-text">a correct merges table</span>
+                        </div>
+                        <div class="margin-note" data-line="41" data-absolute-line="154">
+                            <span class="note-line-ref">l.154</span>
+                            <span class="note-text">return last token</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+            <section class="codex-section" id="test-TestDecode">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">TestDecode</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestDecode">class TestDecode(unittest.TestCase):
+    def test(self):
+        vocab = {i: bytes([i]) for i in range(256)}
+        print(vocab[0] + vocab[1])
+        tests = {
+            &quot;given_empty_merges_return_vocab_decoding_0&quot;: {
+                &quot;encoding&quot;: [97, 98, 99],
+                &quot;merges&quot;: {},
+                &quot;want&quot;: &quot;abc&quot;,
+            },
+            &quot;given_empty_merges_return_vocab_decoding_1&quot;: {
+                &quot;encoding&quot;: [32],  # space
+                &quot;merges&quot;: {},
+                &quot;want&quot;: &quot; &quot;,
+            },
+            &quot;given_empty_merges_return_vocab_decoding_2&quot;: {
+                &quot;encoding&quot;: [48, 49, 50],
+                &quot;merges&quot;: {},
+                &quot;want&quot;: &quot;012&quot;,
+            },
+            &quot;given_empty_merges_return_vocab_decoding_3&quot;: {
+                &quot;encoding&quot;: [0, 1],
+                &quot;merges&quot;: {},
+                &quot;want&quot;: &quot;\x00\x01&quot;,  # utf-8 decoding of 0, 1 tokens
+            },
+            &quot;given_tokens_outside_vocab_and_merges_return_placeholders&quot;: {
+                &quot;encoding&quot;: [256, 257],
+                &quot;merges&quot;: {},  # vocab goes up to 256
+                &quot;want&quot;: &quot;**&quot;,
+            },
+            &quot;given_tokens_in_merges_return_decoding_0&quot;: {
+                &quot;encoding&quot;: [257],
+                &quot;merges&quot;: {(97, 98): 256, (256, 99): 257},
+                &quot;want&quot;: &quot;abc&quot;,  # \x97\x98 (256) + \x99
+            },
+            &quot;given_tokens_in_merges_return_decoding_1&quot;: {
+                &quot;encoding&quot;: [240, 159, 154, 128],
+                &quot;merges&quot;: {(240, 159): 256, (256, 154): 257, (257, 128): 258},
+                &quot;want&quot;: &quot;🚀&quot;,
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(decode(case[&quot;encoding&quot;], case[&quot;merges&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestDecode">
+                        <div class="margin-note" data-line="12" data-absolute-line="173">
+                            <span class="note-line-ref">l.173</span>
+                            <span class="note-text">space</span>
+                        </div>
+                        <div class="margin-note" data-line="24" data-absolute-line="185">
+                            <span class="note-line-ref">l.185</span>
+                            <span class="note-text">utf-8 decoding of 0, 1 tokens</span>
+                        </div>
+                        <div class="margin-note" data-line="28" data-absolute-line="189">
+                            <span class="note-line-ref">l.189</span>
+                            <span class="note-text">vocab goes up to 256</span>
+                        </div>
+                        <div class="margin-note" data-line="34" data-absolute-line="195">
+                            <span class="note-line-ref">l.195</span>
+                            <span class="note-text">\x97\x98 (256) + \x99</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— i —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

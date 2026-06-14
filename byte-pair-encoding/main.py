@@ -71,10 +71,14 @@ def decode(encoding, merges):
     vocab = {i: bytes([i]) for i in range(256)}
     sorted_merges = sorted(merges.items(), key=lambda item: item[1])
     for pair, idx in sorted_merges:
-        vocab[idx] = vocab[pair[0]] + vocab[pair[1]]
+        vocab[idx] = (
+            vocab[pair[0]] + vocab[pair[1]]
+        )  # (97, 98): 256 -> vocab[256] -> b'\x97\x98'
     bytes_arr = []
     for idx in encoding:
-        bytes_arr.append(vocab[idx])
+        bytes_arr.append(
+            vocab.get(idx, b"*")
+        )  # deliberate placeholder for this particular exercise
     bytes_str = b"".join(bytes_arr)
     text = bytes_str.decode("utf-8", errors="replace")
     return text

@@ -1,6 +1,6 @@
 import unittest
 
-from main import encode, get_stats, merge, train
+from main import decode, encode, get_stats, merge, train
 
 
 class TestGetStats(unittest.TestCase):
@@ -157,6 +157,52 @@ class TestEncode(unittest.TestCase):
         for name, case in tests.items():
             with self.subTest(name):
                 self.assertEqual(encode(case["text"], case["merges"]), case["want"])
+
+
+class TestDecode(unittest.TestCase):
+    def test(self):
+        vocab = {i: bytes([i]) for i in range(256)}
+        print(vocab[0] + vocab[1])
+        tests = {
+            "given_empty_merges_return_vocab_decoding_0": {
+                "encoding": [97, 98, 99],
+                "merges": {},
+                "want": "abc",
+            },
+            "given_empty_merges_return_vocab_decoding_1": {
+                "encoding": [32],  # space
+                "merges": {},
+                "want": " ",
+            },
+            "given_empty_merges_return_vocab_decoding_2": {
+                "encoding": [48, 49, 50],
+                "merges": {},
+                "want": "012",
+            },
+            "given_empty_merges_return_vocab_decoding_3": {
+                "encoding": [0, 1],
+                "merges": {},
+                "want": "\x00\x01",  # utf-8 decoding of 0, 1 tokens
+            },
+            "given_tokens_outside_vocab_and_merges_return_placeholders": {
+                "encoding": [256, 257],
+                "merges": {},  # vocab goes up to 256
+                "want": "**",
+            },
+            "given_tokens_in_merges_return_decoding_0": {
+                "encoding": [257],
+                "merges": {(97, 98): 256, (256, 99): 257},
+                "want": "abc",  # \x97\x98 (256) + \x99
+            },
+            "given_tokens_in_merges_return_decoding_1": {
+                "encoding": [240, 159, 154, 128],
+                "merges": {(240, 159): 256, (256, 154): 257, (257, 128): 258},
+                "want": "🚀",
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(decode(case["encoding"], case["merges"]), case["want"])
 
 
 if __name__ == "__main__":

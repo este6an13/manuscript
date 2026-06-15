@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N Grams Tokenization — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">☀️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter II</div>
+            <h1 class="codex-title">N Grams Tokenization</h1>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-format_punctuation">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">format_punctuation</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-format_punctuation">def format_punctuation(text, chars):
+    for char in chars:
+        text = text.replace(char, f&quot; {char} &quot;)
+    return text
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-generate_char_level_ngrams">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">generate_char_level_ngrams</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-generate_char_level_ngrams">def generate_char_level_ngrams(text: str, n: int):
+    joint_text = &quot;_&quot;.join(text.lower().split())
+    tokens = []
+    L = len(joint_text)
+    # n=3; &#x27;abcd&#x27;; last iter starts from idx 1 (4-3+1, and -1 is 1); that is &#x27;b&#x27; to capture &#x27;bcd&#x27;
+    for i in range(L - n + 1):
+        tokens.append(tuple(joint_text[i : i + n]))  # &#x27;abc&#x27; -&gt; (&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;)
+    return tokens
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-generate_char_level_ngrams">
+                        <div class="margin-note" data-line="5" data-absolute-line="14">
+                            <span class="note-line-ref">l.14</span>
+                            <span class="note-text">n=3; &#x27;abcd&#x27;; last iter starts from idx 1 (4-3+1, and -1 is 1); that is &#x27;b&#x27; to capture &#x27;bcd&#x27;</span>
+                        </div>
+                        <div class="margin-note" data-line="7" data-absolute-line="16">
+                            <span class="note-line-ref">l.16</span>
+                            <span class="note-text">&#x27;abc&#x27; -&gt; (&#x27;a&#x27;, &#x27;b&#x27;, &#x27;c&#x27;)</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-generate_word_level_ngrams">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">generate_word_level_ngrams</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-generate_word_level_ngrams">def generate_word_level_ngrams(text: str, n: int):
+    text = format_punctuation(text, punctuation)  # &quot;!&quot;#$%&amp;&#x27;()*+,-./:;&lt;=&gt;?
+    split_text = text.lower().split()
+    tokens = []
+    L = len(split_text)
+    for i in range(L - n + 1):
+        tokens.append(tuple(split_text[i : i + n]))  # [&#x27;the&#x27;, &#x27;cat&#x27;] -&gt; (&#x27;the&#x27;, &#x27;cat&#x27;)
+    return tokens
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-generate_word_level_ngrams">
+                        <div class="margin-note" data-line="2" data-absolute-line="21">
+                            <span class="note-line-ref">l.21</span>
+                            <span class="note-text">&quot;!&quot;#$%&amp;&#x27;()*+,-./:;&lt;=&gt;?</span>
+                        </div>
+                        <div class="margin-note" data-line="7" data-absolute-line="26">
+                            <span class="note-line-ref">l.26</span>
+                            <span class="note-text">[&#x27;the&#x27;, &#x27;cat&#x27;] -&gt; (&#x27;the&#x27;, &#x27;cat&#x27;)</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-generate_ngrams">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">generate_ngrams</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-generate_ngrams">def generate_ngrams(text: str, n: int, level=&quot;char&quot;) -&gt; list[tuple[str, ...]]:
+    if n &lt;= 0:
+        raise ValueError(&quot;n must be greater than 0&quot;)
+    match level:
+        case &quot;char&quot;:
+            return generate_char_level_ngrams(text, n)
+        case &quot;word&quot;:
+            return generate_word_level_ngrams(text, n)
+        case _:
+            raise ValueError(&quot;wrong level&quot;)
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-__main__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">Demonstration</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-__main__">if __name__ == &quot;__main__&quot;:
+    text = &quot;&quot;&quot;Sitting alone in a café without distractions only gets better when there is something to write on. Not with a keyboard. You must use your single hand to write, not two. Ideally, with a pen on paper.&quot;&quot;&quot;
+
+    # ngrams = generate_ngrams(text, 1, &quot;word&quot;)
+
+    ngrams = generate_ngrams(text, 2, &quot;word&quot;)
+
+    # ngrams = generate_ngrams(text, 3, &quot;char&quot;)
+
+    # ngrams = generate_ngrams(text, 4, &quot;char&quot;)
+
+    # ngrams = generate_ngrams(text, 5, &quot;char&quot;)
+
+    print(ngrams)
+    print(len(ngrams))
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-__main__">
+                        <div class="margin-note" data-line="4" data-absolute-line="45">
+                            <span class="note-line-ref">l.45</span>
+                            <span class="note-text">ngrams = generate_ngrams(text, 1, &quot;word&quot;)</span>
+                        </div>
+                        <div class="margin-note" data-line="8" data-absolute-line="49">
+                            <span class="note-line-ref">l.49</span>
+                            <span class="note-text">ngrams = generate_ngrams(text, 3, &quot;char&quot;)</span>
+                        </div>
+                        <div class="margin-note" data-line="10" data-absolute-line="51">
+                            <span class="note-line-ref">l.51</span>
+                            <span class="note-text">ngrams = generate_ngrams(text, 4, &quot;char&quot;)</span>
+                        </div>
+                        <div class="margin-note" data-line="12" data-absolute-line="53">
+                            <span class="note-line-ref">l.53</span>
+                            <span class="note-text">ngrams = generate_ngrams(text, 5, &quot;char&quot;)</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— ii —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

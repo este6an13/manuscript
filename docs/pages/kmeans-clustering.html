@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kmeans Clustering — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">🕯️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter II</div>
+            <h1 class="codex-title">Kmeans Clustering</h1>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-calculate_euclidean_distance">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">calculate_euclidean_distance</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-calculate_euclidean_distance">def calculate_euclidean_distance(p: tuple[float], q: tuple[float]) -&gt; float:
+    n = len(p)
+    m = len(q)
+    if m != n:
+        raise ValueError(&quot;p, q must have the same dimension&quot;)
+    squares_sum = 0
+    for i in range(n):
+        squares_sum += (p[i] - q[i]) ** 2
+    return sqrt(squares_sum)
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-compute_centroid">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">compute_centroid</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_centroid">def compute_centroid(points: list[tuple[float]]) -&gt; tuple[float]:
+    N = len(points)
+    if N == 0:
+        raise ValueError(&quot;points must not be empty&quot;)
+    n = len(points[0])  # number of components (dimension)
+    centroid = []
+    for i in range(n):
+        component_sum = 0
+        for p in points:
+            component_sum += p[i]
+        centroid.append(component_sum / len(points))
+    return tuple(centroid)
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-compute_centroid">
+                        <div class="margin-note" data-line="5" data-absolute-line="20">
+                            <span class="note-line-ref">l.20</span>
+                            <span class="note-text">number of components (dimension)</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-stopping_condition">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">stopping_condition</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-stopping_condition">def stopping_condition(P, Q):
+    n = len(P)
+    m = len(Q)
+    if n != m:
+        raise ValueError(&quot;P, Q must have the same number of points&quot;)
+    stop = True
+    for p, q in zip(P, Q):
+        distance = calculate_euclidean_distance(p, q)
+        if distance &gt;= 0.001:
+            stop = False
+            break
+    return stop
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-find_nearest_centroid">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">find_nearest_centroid</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-find_nearest_centroid">def find_nearest_centroid(point: tuple[float], centroids: list[tuple[float]]) -&gt; int:
+    min_distance = float(&quot;inf&quot;)
+    nearest_centroid = -1
+    K = len(centroids)
+    for k in range(K):
+        distance = calculate_euclidean_distance(point, centroids[k])
+        if distance &lt; min_distance:
+            min_distance = distance
+            nearest_centroid = k
+    return nearest_centroid
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-compute_new_centroids">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">compute_new_centroids</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_new_centroids">def compute_new_centroids(
+    points: list[tuple[float]], clusters_tags: list[int], K: int
+) -&gt; list[tuple[float]]:
+    new_centroids = []
+    # for each cluster, get all points assigned and compute their centroid
+    for i in range(K):
+        cluster_points = [p for p, k in zip(points, clusters_tags) if k == i]
+        if len(cluster_points) == 0:
+            random_point = sample(points, 1)[0]
+            new_centroids.append(random_point)  # set a random point as centroid
+            continue
+        new_centroid = compute_centroid(cluster_points)
+        new_centroids.append(new_centroid)
+    return new_centroids
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-compute_new_centroids">
+                        <div class="margin-note" data-line="5" data-absolute-line="60">
+                            <span class="note-line-ref">l.60</span>
+                            <span class="note-text">for each cluster, get all points assigned and compute their centroid</span>
+                        </div>
+                        <div class="margin-note" data-line="10" data-absolute-line="65">
+                            <span class="note-line-ref">l.65</span>
+                            <span class="note-text">set a random point as centroid</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-kmeans_clustering">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VI</span>
+                    <span class="section-name">kmeans_clustering</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-kmeans_clustering">def kmeans_clustering(K: int, points: list[tuple[float]]):
+    # dynamic K adjustment: Number of unique points must be at least K
+    unique_points = len(set(points))
+    if K &gt; unique_points:
+        print(f&quot;Number of unique points must be at least K: setting K={unique_points}&quot;)
+        K = unique_points
+
+    centroids = sample(points, K)  # chosen at random from the datapoints (deliberatr)
+    N = len(points)
+    clusters_tags = [-1] * N  # the cluster assigned to each point
+
+    while True:
+        # find nearest centroid for each point
+        for i in range(N):
+            # assigned nearest centroid to point i
+            clusters_tags[i] = find_nearest_centroid(points[i], centroids)
+        # compute new centroids
+        new_centroids = compute_new_centroids(points, clusters_tags, K)
+        # check stopping condition
+        if stopping_condition(centroids, new_centroids):
+            break
+        # prepare next iteration
+        centroids = new_centroids
+
+    return points, clusters_tags
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-kmeans_clustering">
+                        <div class="margin-note" data-line="2" data-absolute-line="73">
+                            <span class="note-line-ref">l.73</span>
+                            <span class="note-text">dynamic K adjustment: Number of unique points must be at least K</span>
+                        </div>
+                        <div class="margin-note" data-line="8" data-absolute-line="79">
+                            <span class="note-line-ref">l.79</span>
+                            <span class="note-text">chosen at random from the datapoints (deliberatr)</span>
+                        </div>
+                        <div class="margin-note" data-line="10" data-absolute-line="81">
+                            <span class="note-line-ref">l.81</span>
+                            <span class="note-text">the cluster assigned to each point</span>
+                        </div>
+                        <div class="margin-note" data-line="13" data-absolute-line="84">
+                            <span class="note-line-ref">l.84</span>
+                            <span class="note-text">find nearest centroid for each point</span>
+                        </div>
+                        <div class="margin-note" data-line="15" data-absolute-line="86">
+                            <span class="note-line-ref">l.86</span>
+                            <span class="note-text">assigned nearest centroid to point i</span>
+                        </div>
+                        <div class="margin-note" data-line="17" data-absolute-line="88">
+                            <span class="note-line-ref">l.88</span>
+                            <span class="note-text">compute new centroids</span>
+                        </div>
+                        <div class="margin-note" data-line="19" data-absolute-line="90">
+                            <span class="note-line-ref">l.90</span>
+                            <span class="note-text">check stopping condition</span>
+                        </div>
+                        <div class="margin-note" data-line="22" data-absolute-line="93">
+                            <span class="note-line-ref">l.93</span>
+                            <span class="note-text">prepare next iteration</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— ii —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

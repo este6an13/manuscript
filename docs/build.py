@@ -729,7 +729,7 @@ def generate_index_page(
         <a href="index.html" class="nav-home">📜 Manuscript</a>
         <div class="nav-controls">
             <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-                <span class="theme-icon-light">🕯️</span>
+                <span class="theme-icon-light">☀️</span>
                 <span class="theme-icon-dark">🌙</span>
             </button>
         </div>

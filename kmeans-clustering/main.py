@@ -96,9 +96,10 @@ def kmeans_clustering(K: int, points: list[tuple[float]]):
     return points, clusters_tags
 
 
-points, clusters_tags = kmeans_clustering(
-    3,
-    [(1, 0), (1, 0), (1, 0), (100, 200)],
-)
+if __name__ == "__main__":
+    points, clusters_tags = kmeans_clustering(
+        3,
+        [(1, 0), (1, 0), (1, 0), (100, 200)],
+    )
 
-print(points, clusters_tags)
+    print(points, clusters_tags)

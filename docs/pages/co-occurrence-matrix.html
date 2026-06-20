@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Co Occurrence Matrix — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">🕯️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter II</div>
+            <h1 class="codex-title">Co Occurrence Matrix</h1>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-format_punctuation">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">format_punctuation</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-format_punctuation">def format_punctuation(text, chars):
+    for char in chars:
+        text = text.replace(char, f&quot; {char} &quot;)
+    return text
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-get_words">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">get_words</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-get_words">def get_words(text: str) -&gt; list[str]:
+    text = text.lower()
+    text = format_punctuation(text, punctuation)
+    words = text.split()
+    return words
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-build_vocab">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">build_vocab</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-build_vocab">def build_vocab(text: str) -&gt; tuple[dict[str, int], dict[int, str]]:
+    words = get_words(text)
+    word_to_id = {}
+    id_to_word = {}
+    idx = 0
+    for word in words:
+        if word in word_to_id:
+            continue
+        word_to_id[word] = idx
+        id_to_word[idx] = word
+        idx += 1
+    return word_to_id, id_to_word
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-init_matrix">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">init_matrix</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-init_matrix">def init_matrix(N: int) -&gt; list[list[int]]:
+    matrix = [[0 for _ in range(N)] for _ in range(N)]
+    return matrix
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-compute_sums">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">compute_sums</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_sums">def compute_sums(matrix):
+    N = len(matrix)
+    Sx = [0 for _ in range(N)]  # rows sums
+    Sy = [0 for _ in range(N)]  # columns sums
+    S = 0  # full matrix sum
+    for x in range(N):
+        for y in range(N):
+            Sxy = matrix[x][y]
+            Sx[x] += Sxy
+            Sy[y] += Sxy
+            S += Sxy
+    return Sx, Sy, S
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-compute_sums">
+                        <div class="margin-note" data-line="3" data-absolute-line="39">
+                            <span class="note-line-ref">l.39</span>
+                            <span class="note-text">rows sums</span>
+                        </div>
+                        <div class="margin-note" data-line="4" data-absolute-line="40">
+                            <span class="note-line-ref">l.40</span>
+                            <span class="note-text">columns sums</span>
+                        </div>
+                        <div class="margin-note" data-line="5" data-absolute-line="41">
+                            <span class="note-line-ref">l.41</span>
+                            <span class="note-text">full matrix sum</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-pmi">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VI</span>
+                    <span class="section-name">pmi</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-pmi">def pmi(Pxy: float, Px: float, Py: float) -&gt; float:
+    if Pxy == 0 or Px == 0 or Py == 0:
+        return 0
+    return log2(Pxy / (Px * Py))  # log(0) is undefined
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-pmi">
+                        <div class="margin-note" data-line="4" data-absolute-line="54">
+                            <span class="note-line-ref">l.54</span>
+                            <span class="note-text">log(0) is undefined</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-ppmi">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VII</span>
+                    <span class="section-name">ppmi</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-ppmi">def ppmi(pmi: float) -&gt; float:
+    return max(0, pmi)
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-compute_ppmi_matrix">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VIII</span>
+                    <span class="section-name">compute_ppmi_matrix</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_ppmi_matrix">def compute_ppmi_matrix(matrix: list[list[int]]) -&gt; list[list[float]]:
+    N = len(matrix)
+    ppmi_matrix = init_matrix(N)
+    Sx, Sy, S = compute_sums(matrix)
+    if S == 0:
+        return ppmi_matrix  # prevent dividing by zero
+    for x in range(N):
+        for y in range(N):
+            Sxy = matrix[x][y]  # count of co-occurrences of (x, y)
+            Pxy = Sxy / S  # probability of (x, y) co-occurence
+            Px = Sx[x] / S
+            Py = Sy[y] / S
+            ppmi_matrix[x][y] = ppmi(pmi(Pxy, Px, Py))
+    return ppmi_matrix
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-compute_ppmi_matrix">
+                        <div class="margin-note" data-line="6" data-absolute-line="67">
+                            <span class="note-line-ref">l.67</span>
+                            <span class="note-text">prevent dividing by zero</span>
+                        </div>
+                        <div class="margin-note" data-line="9" data-absolute-line="70">
+                            <span class="note-line-ref">l.70</span>
+                            <span class="note-text">count of co-occurrences of (x, y)</span>
+                        </div>
+                        <div class="margin-note" data-line="10" data-absolute-line="71">
+                            <span class="note-line-ref">l.71</span>
+                            <span class="note-text">probability of (x, y) co-occurence</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-build_co_occurrence_matrix">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IX</span>
+                    <span class="section-name">build_co_occurrence_matrix</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-build_co_occurrence_matrix">def build_co_occurrence_matrix(text, window_size=1):
+    word_to_id, _ = build_vocab(text)
+    N = len(word_to_id)
+    matrix = init_matrix(N)
+    words = get_words(text)
+    W = len(words)
+    for i in range(W):
+        window = (
+            words[max(i - window_size, 0) : i]  # max to prevent having negative indexes
+            + words[
+                i + 1 : min(i + 1 + window_size, W)
+            ]  # min to prevent having out-of-bound indexes
+        )
+        word = words[i]
+        word_id = word_to_id[word]
+        for co_occurrent_word in window:
+            co_occurrent_word_id = word_to_id[co_occurrent_word]
+            matrix[word_id][co_occurrent_word_id] += 1
+    return matrix
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-build_co_occurrence_matrix">
+                        <div class="margin-note" data-line="9" data-absolute-line="86">
+                            <span class="note-line-ref">l.86</span>
+                            <span class="note-text">max to prevent having negative indexes</span>
+                        </div>
+                        <div class="margin-note" data-line="12" data-absolute-line="89">
+                            <span class="note-line-ref">l.89</span>
+                            <span class="note-text">min to prevent having out-of-bound indexes</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-__main__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ X</span>
+                    <span class="section-name">Demonstration</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-__main__">if __name__ == &quot;__main__&quot;:
+    text = &quot;&quot;&quot;Sitting alone in a café without distractions only gets better when there is something to write on. Not with a keyboard. You must use your single hand to write, not two. Ideally, with a pen on paper.&quot;&quot;&quot;
+    # text = &quot;a b c d&quot;
+
+    vocab = build_vocab(text)
+    print(vocab)
+
+    raw_matrix = build_co_occurrence_matrix(text, 2)
+    ppmi_matrix = compute_ppmi_matrix(raw_matrix)
+    print(raw_matrix)
+    print(ppmi_matrix)
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-__main__">
+                        <div class="margin-note" data-line="3" data-absolute-line="101">
+                            <span class="note-line-ref">l.101</span>
+                            <span class="note-text">text = &quot;a b c d&quot;</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— ii —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

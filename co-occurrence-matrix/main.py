@@ -96,7 +96,7 @@ def build_co_occurrence_matrix(text, window_size=1):
     return matrix
 
 
-if __name__ == "__init__":
+if __name__ == "__main__":
     text = """Sitting alone in a café without distractions only gets better when there is something to write on. Not with a keyboard. You must use your single hand to write, not two. Ideally, with a pen on paper."""
     # text = "a b c d"
 

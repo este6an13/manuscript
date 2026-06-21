@@ -19,6 +19,9 @@ Here is the current index of implemented algorithms and concepts:
 | Category | Algorithm | Description | Directory |
 | :--- | :--- | :--- | :--- |
 | **NLP / Tokenization** | **Byte Pair Encoding (BPE)** | The subword tokenization algorithm used by GPT and other modern LLMs to compress text into token IDs. | [`/byte-pair-encoding`](./byte-pair-encoding) |
+| **NLP / Tokenization** | **N-gram Tokenization** | Character-level and word-level N-gram generator to split text into sequence patterns of length N. | [`/ngram-tokenization`](./ngram-tokenization) |
+| **NLP / Semantics** | **Co-occurrence Matrix & PPMI** | Constructing word co-occurrence matrices from text and computing Positive Pointwise Mutual Information (PPMI). | [`/co-occurrence-matrix`](./co-occurrence-matrix) |
+| **Clustering / ML** | **K-Means Clustering** | Unsupervised clustering algorithm to partition data points into K clusters based on Euclidean distance. | [`/kmeans-clustering`](./kmeans-clustering) |
 
 ---
 

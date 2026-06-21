@@ -7,6 +7,8 @@ def calculate_euclidean_distance(p: tuple[float], q: tuple[float]) -> float:
     m = len(q)
     if m != n:
         raise ValueError("p, q must have the same dimension")
+    if n == 0:  # m == 0
+        raise ValueError("p, q dimension must be greater than zero")
     squares_sum = 0
     for i in range(n):
         squares_sum += (p[i] - q[i]) ** 2

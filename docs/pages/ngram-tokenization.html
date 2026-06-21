@@ -165,6 +165,229 @@
             </section>
         </section>
 
+        <div class="ornamental-divider">✦ ✦ ✦</div>
+        <section class="codex-chapter" id="verification">
+            <h2 class="chapter-heading">Verification Appendix</h2>
+
+            <section class="codex-section" id="test-TestFormatPunctuation">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">TestFormatPunctuation</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestFormatPunctuation">class TestFormatPunctuation(unittest.TestCase):
+    def test(self):
+        f = format_punctuation
+        tests = {
+            &quot;given_empty_text_return_empty_text&quot;: {
+                &quot;text&quot;: &quot;&quot;,
+                &quot;chars&quot;: &quot;any&quot;,
+                &quot;want&quot;: &quot;&quot;,
+            },
+            &quot;given_text_with_no_puntuation_return_same_text&quot;: {
+                &quot;text&quot;: &quot;a b c d&quot;,
+                &quot;chars&quot;: &quot;.&quot;,
+                &quot;want&quot;: &quot;a b c d&quot;,
+            },
+            &quot;given_text_with_punctuation_return_formatted_text_0&quot;: {
+                &quot;text&quot;: &quot;a.b.c.d&quot;,
+                &quot;chars&quot;: &quot;.&quot;,
+                &quot;want&quot;: &quot;a . b . c . d&quot;,
+            },
+            &quot;given_text_with_punctuation_return_formatted_text_1&quot;: {
+                &quot;text&quot;: &quot;a. b. c. d&quot;,
+                &quot;chars&quot;: &quot;.&quot;,
+                &quot;want&quot;: &quot;a .  b .  c .  d&quot;,
+            },
+            &quot;given_text_with_punctuation_return_formatted_text_2&quot;: {
+                &quot;text&quot;: &quot;¿a.b.c.d?&quot;,
+                &quot;chars&quot;: &quot;.¿?&quot;,
+                &quot;want&quot;: &quot; ¿ a . b . c . d ? &quot;,
+            },
+            &quot;given_text_with_unmatched_punctuation_return_same_text&quot;: {
+                &quot;text&quot;: &quot;a.b.c.d&quot;,
+                &quot;chars&quot;: &quot;_&quot;,  # no matching punctuation char
+                &quot;want&quot;: &quot;a.b.c.d&quot;,
+            },
+            &quot;given_only_punctuated_text_return_formatted_text&quot;: {
+                &quot;text&quot;: &quot;.....&quot;,
+                &quot;chars&quot;: &quot;.&quot;,
+                &quot;want&quot;: &quot; .  .  .  .  . &quot;,
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(f(case[&quot;text&quot;], case[&quot;chars&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestFormatPunctuation">
+                        <div class="margin-note" data-line="32" data-absolute-line="41">
+                            <span class="note-line-ref">l.41</span>
+                            <span class="note-text">no matching punctuation char</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+            <section class="codex-section" id="test-TestGenerateCharLevelNGrams">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">TestGenerateCharLevelNGrams</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestGenerateCharLevelNGrams">class TestGenerateCharLevelNGrams(unittest.TestCase):
+    def test(self):
+        f = generate_char_level_ngrams
+        tests = {
+            &quot;given_empty_text_return_empty_list&quot;: {
+                &quot;text&quot;: &quot;&quot;,
+                &quot;n&quot;: 3,  # any
+                &quot;want&quot;: [],
+            },
+            &quot;given_one_char_and_unigram_return_one_unigram&quot;: {
+                &quot;text&quot;: &quot;a&quot;,
+                &quot;n&quot;: 1,
+                &quot;want&quot;: [(&quot;a&quot;,)],
+            },
+            &quot;given_one_char_and_bigram_return_empty_list&quot;: {
+                &quot;text&quot;: &quot;a&quot;,
+                &quot;n&quot;: 2,  # no bigrams in text
+                &quot;want&quot;: [],
+            },
+            &quot;given_two_chars_and_trigram_return_empty_list&quot;: {
+                &quot;text&quot;: &quot;ab&quot;,
+                &quot;n&quot;: 3,  # no trigrams in text
+                &quot;want&quot;: [],
+            },
+            &quot;given_two_chars_and_bigram_return_one_bigram&quot;: {
+                &quot;text&quot;: &quot;ab&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;a&quot;, &quot;b&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_0&quot;: {
+                &quot;text&quot;: &quot;abc&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;a&quot;, &quot;b&quot;), (&quot;b&quot;, &quot;c&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_1&quot;: {
+                &quot;text&quot;: &quot;a c&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;a&quot;, &quot;_&quot;), (&quot;_&quot;, &quot;c&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_2&quot;: {
+                &quot;text&quot;: &quot;a.b&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;a&quot;, &quot;.&quot;), (&quot;.&quot;, &quot;b&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_3&quot;: {
+                &quot;text&quot;: &quot;a _&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;a&quot;, &quot;_&quot;), (&quot;_&quot;, &quot;_&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_4&quot;: {
+                &quot;text&quot;: &quot;abcd&quot;,
+                &quot;n&quot;: 3,
+                &quot;want&quot;: [(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;), (&quot;b&quot;, &quot;c&quot;, &quot;d&quot;)],
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(f(case[&quot;text&quot;], case[&quot;n&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestGenerateCharLevelNGrams">
+                        <div class="margin-note" data-line="7" data-absolute-line="61">
+                            <span class="note-line-ref">l.61</span>
+                            <span class="note-text">any</span>
+                        </div>
+                        <div class="margin-note" data-line="17" data-absolute-line="71">
+                            <span class="note-line-ref">l.71</span>
+                            <span class="note-text">no bigrams in text</span>
+                        </div>
+                        <div class="margin-note" data-line="22" data-absolute-line="76">
+                            <span class="note-line-ref">l.76</span>
+                            <span class="note-text">no trigrams in text</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+            <section class="codex-section" id="test-TestGenerateWordLevelNGrams">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">TestGenerateWordLevelNGrams</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestGenerateWordLevelNGrams">class TestGenerateWordLevelNGrams(unittest.TestCase):
+    def test(self):
+        f = generate_word_level_ngrams
+        tests = {
+            &quot;given_empty_text_return_empty_list&quot;: {
+                &quot;text&quot;: &quot;&quot;,
+                &quot;n&quot;: 3,  # any
+                &quot;want&quot;: [],
+            },
+            &quot;given_one_word_and_unigram_return_one_word_unigram&quot;: {
+                &quot;text&quot;: &quot;word&quot;,
+                &quot;n&quot;: 1,
+                &quot;want&quot;: [(&quot;word&quot;,)],
+            },
+            &quot;given_one_word_and_bigram_return_empty_list&quot;: {
+                &quot;text&quot;: &quot;word&quot;,
+                &quot;n&quot;: 2,  # no bigrams in text
+                &quot;want&quot;: [],
+            },
+            &quot;given_two_words_and_trigram_return_empty_list&quot;: {
+                &quot;text&quot;: &quot;two words&quot;,
+                &quot;n&quot;: 3,  # no trigrams in text
+                &quot;want&quot;: [],
+            },
+            &quot;given_two_words_and_bigram_return_one_bigram&quot;: {
+                &quot;text&quot;: &quot;hello world&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;hello&quot;, &quot;world&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_0&quot;: {
+                &quot;text&quot;: &quot;happy new year&quot;,
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;happy&quot;, &quot;new&quot;), (&quot;new&quot;, &quot;year&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_1&quot;: {
+                &quot;text&quot;: &quot;hello world!&quot;,  # ! is puntuaction: a separate token
+                &quot;n&quot;: 2,
+                &quot;want&quot;: [(&quot;hello&quot;, &quot;world&quot;), (&quot;world&quot;, &quot;!&quot;)],
+            },
+            &quot;given_text_and_n_return_ngrams_2&quot;: {
+                &quot;text&quot;: &quot;HAPPY NEW YEAR!&quot;,  # tokens get lowecased
+                &quot;n&quot;: 3,
+                &quot;want&quot;: [(&quot;happy&quot;, &quot;new&quot;, &quot;year&quot;), (&quot;new&quot;, &quot;year&quot;, &quot;!&quot;)],
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(f(case[&quot;text&quot;], case[&quot;n&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestGenerateWordLevelNGrams">
+                        <div class="margin-note" data-line="7" data-absolute-line="121">
+                            <span class="note-line-ref">l.121</span>
+                            <span class="note-text">any</span>
+                        </div>
+                        <div class="margin-note" data-line="17" data-absolute-line="131">
+                            <span class="note-line-ref">l.131</span>
+                            <span class="note-text">no bigrams in text</span>
+                        </div>
+                        <div class="margin-note" data-line="22" data-absolute-line="136">
+                            <span class="note-line-ref">l.136</span>
+                            <span class="note-text">no trigrams in text</span>
+                        </div>
+                        <div class="margin-note" data-line="36" data-absolute-line="150">
+                            <span class="note-line-ref">l.150</span>
+                            <span class="note-text">! is puntuaction: a separate token</span>
+                        </div>
+                        <div class="margin-note" data-line="41" data-absolute-line="155">
+                            <span class="note-line-ref">l.155</span>
+                            <span class="note-text">tokens get lowecased</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
         <footer class="codex-footer">
             <div class="ornamental-rule">❦</div>
             <span class="page-number">— iv —</span>

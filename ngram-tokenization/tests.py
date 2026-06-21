@@ -1,6 +1,10 @@
 import unittest
 
-from main import format_punctuation, generate_char_level_ngrams
+from main import (
+    format_punctuation,
+    generate_char_level_ngrams,
+    generate_word_level_ngrams,
+)
 
 
 class TestFormatPunctuation(unittest.TestCase):
@@ -101,6 +105,56 @@ class TestGenerateCharLevelNGrams(unittest.TestCase):
                 "text": "abcd",
                 "n": 3,
                 "want": [("a", "b", "c"), ("b", "c", "d")],
+            },
+        }
+        for name, case in tests.items():
+            with self.subTest(name):
+                self.assertEqual(f(case["text"], case["n"]), case["want"])
+
+
+class TestGenerateWordLevelNGrams(unittest.TestCase):
+    def test(self):
+        f = generate_word_level_ngrams
+        tests = {
+            "given_empty_text_return_empty_list": {
+                "text": "",
+                "n": 3,  # any
+                "want": [],
+            },
+            "given_one_word_and_unigram_return_one_word_unigram": {
+                "text": "word",
+                "n": 1,
+                "want": [("word",)],
+            },
+            "given_one_word_and_bigram_return_empty_list": {
+                "text": "word",
+                "n": 2,  # no bigrams in text
+                "want": [],
+            },
+            "given_two_words_and_trigram_return_empty_list": {
+                "text": "two words",
+                "n": 3,  # no trigrams in text
+                "want": [],
+            },
+            "given_two_words_and_bigram_return_one_bigram": {
+                "text": "hello world",
+                "n": 2,
+                "want": [("hello", "world")],
+            },
+            "given_text_and_n_return_ngrams_0": {
+                "text": "happy new year",
+                "n": 2,
+                "want": [("happy", "new"), ("new", "year")],
+            },
+            "given_text_and_n_return_ngrams_1": {
+                "text": "hello world!",  # ! is puntuaction: a separate token
+                "n": 2,
+                "want": [("hello", "world"), ("world", "!")],
+            },
+            "given_text_and_n_return_ngrams_2": {
+                "text": "HAPPY NEW YEAR!",  # tokens get lowecased
+                "n": 3,
+                "want": [("happy", "new", "year"), ("new", "year", "!")],
             },
         }
         for name, case in tests.items():

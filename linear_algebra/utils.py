@@ -78,4 +78,4 @@ def matmul(A, B):
 
 
 def matmulv(A, v):
-    return matmul(A, t([v]))  # v as a column vector
+    return [dot(row, v) for row in A]

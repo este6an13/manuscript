@@ -81,7 +81,7 @@ def to_roman(n: int, *, upper: bool = True) -> str:
 
 def discover_algorithms() -> list[Path]:
     """Return sorted list of algorithm directories (subdirs of repo root
-    that contain a ``main.py`` and whose name doesn't start with ``.`` or
+    that contain a ``main.py`` or ``utils.py`` and whose name doesn't start with ``.`` or
     ``_`` and is not in *SKIP_DIRS*).
     """
     dirs: list[Path] = []
@@ -93,7 +93,7 @@ def discover_algorithms() -> list[Path]:
             continue
         if name in SKIP_DIRS:
             continue
-        if (entry / "main.py").exists():
+        if (entry / "main.py").exists() or (entry / "utils.py").exists():
             dirs.append(entry)
     return dirs
 
@@ -532,7 +532,10 @@ def generate_algorithm_page(
     """Generate the full HTML for a single algorithm page."""
 
     # --- Read sources ---
-    main_source = (algo_dir / "main.py").read_text(encoding="utf-8")
+    main_path = algo_dir / "main.py"
+    if not main_path.exists():
+        main_path = algo_dir / "utils.py"
+    main_source = main_path.read_text(encoding="utf-8")
     main_source = main_source.replace("\r\n", "\n")
 
     tests_source: str | None = None
@@ -555,7 +558,7 @@ def generate_algorithm_page(
         category = meta["category"]
     else:
         # Fallback: use directory name
-        raw_title = algo_dir.name.replace("-", " ").title()
+        raw_title = algo_dir.name.replace("-", " ").replace("_", " ").title()
         title = _strip_emoji(raw_title)
         category = ""
 
@@ -815,7 +818,7 @@ def main() -> None:
             ordered_entries.append(
                 {
                     "category": "",
-                    "algorithm": d.name.replace("-", " ").title(),
+                    "algorithm": d.name.replace("-", " ").replace("_", " ").title(),
                     "description": "",
                     "dir_name": d.name,
                 }

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Algebra — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">☀️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter V</div>
+            <h1 class="codex-title">Linear Algebra</h1>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-dot">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">dot</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-dot">def dot(u, v):  # dot product
+    dot_product = 0
+    for uu, vv in zip(u, v):
+        dot_product += uu * vv
+    return dot_product
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-dot">
+                        <div class="margin-note" data-line="1" data-absolute-line="4">
+                            <span class="note-line-ref">l.4</span>
+                            <span class="note-text">dot product</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-outer">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">outer</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-outer">def outer(u, v):  # outer product
+    M = len(u)  # rows
+    N = len(v)  # columns
+    A = [[0 for _ in range(N)] for _ in range(M)]
+    for i in range(M):
+        for j in range(N):
+            A[i][j] = u[i] * v[j]
+    return A
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-outer">
+                        <div class="margin-note" data-line="1" data-absolute-line="11">
+                            <span class="note-line-ref">l.11</span>
+                            <span class="note-text">outer product</span>
+                        </div>
+                        <div class="margin-note" data-line="2" data-absolute-line="12">
+                            <span class="note-line-ref">l.12</span>
+                            <span class="note-text">rows</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="13">
+                            <span class="note-line-ref">l.13</span>
+                            <span class="note-text">columns</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-norm">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">norm</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-norm">def norm(v):
+    squares_sum = 0
+    for vv in v:
+        squares_sum += vv**2
+    return sqrt(squares_sum)
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-normalize">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">normalize</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-normalize">def normalize(v):
+    n = norm(v)
+    return [vv / n for vv in v]
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-t">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">t</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-t">def t(A):  # transpose
+    M = len(A)  # rows -&gt; columns
+    N = len(A[0])  # columns -&gt; rows
+    At = [[0 for _ in range(M)] for _ in range(N)]
+    for i in range(M):
+        for j in range(N):
+            At[j][i] = A[i][j]
+    return At
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-t">
+                        <div class="margin-note" data-line="1" data-absolute-line="33">
+                            <span class="note-line-ref">l.33</span>
+                            <span class="note-text">transpose</span>
+                        </div>
+                        <div class="margin-note" data-line="2" data-absolute-line="34">
+                            <span class="note-line-ref">l.34</span>
+                            <span class="note-text">rows -&gt; columns</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="35">
+                            <span class="note-line-ref">l.35</span>
+                            <span class="note-text">columns -&gt; rows</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-scale">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VI</span>
+                    <span class="section-name">scale</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-scale">def scale(a, A):
+    M = len(A)  # rows
+    N = len(A[0])  # columns
+    aA = [[0 for _ in range(N)] for _ in range(M)]
+    for i in range(M):
+        for j in range(N):
+            aA[i][j] = a * A[i][j]
+    return aA
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-scale">
+                        <div class="margin-note" data-line="2" data-absolute-line="44">
+                            <span class="note-line-ref">l.44</span>
+                            <span class="note-text">rows</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="45">
+                            <span class="note-line-ref">l.45</span>
+                            <span class="note-text">columns</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-add">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VII</span>
+                    <span class="section-name">add</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-add">def add(A, B):
+    M = len(A)  # rows
+    N = len(A[0])  # columns
+    C = [[0 for _ in range(N)] for _ in range(M)]
+    for i in range(M):
+        for j in range(N):
+            C[i][j] = A[i][j] + B[i][j]
+    return C
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-add">
+                        <div class="margin-note" data-line="2" data-absolute-line="54">
+                            <span class="note-line-ref">l.54</span>
+                            <span class="note-text">rows</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="55">
+                            <span class="note-line-ref">l.55</span>
+                            <span class="note-text">columns</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-matmul">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VIII</span>
+                    <span class="section-name">matmul</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-matmul">def matmul(A, B):
+    M_A = len(A)  # rows of new matrix
+    N_A = len(A[0])
+    M_B = len(B)
+    N_B = len(B[0])  # columns of new matrix
+    if N_A != M_B:
+        raise ValueError(
+            &quot;Number of columns of A must be equal to number of columns of B&quot;
+        )
+    AB = [[0 for _ in range(N_B)] for _ in range(M_A)]
+    Bt = t(B)
+    for i in range(M_A):
+        for j in range(N_B):
+            AB[i][j] = dot(A[i], Bt[j])
+    return AB
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-matmul">
+                        <div class="margin-note" data-line="2" data-absolute-line="64">
+                            <span class="note-line-ref">l.64</span>
+                            <span class="note-text">rows of new matrix</span>
+                        </div>
+                        <div class="margin-note" data-line="5" data-absolute-line="67">
+                            <span class="note-line-ref">l.67</span>
+                            <span class="note-text">columns of new matrix</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-matmulv">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IX</span>
+                    <span class="section-name">matmulv</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-matmulv">def matmulv(A, v):
+    return [dot(row, v) for row in A]
+</code></pre>
+                </div>
+            </section>
+        </section>
+
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— v —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

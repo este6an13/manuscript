@@ -37,7 +37,7 @@
                     <span class="section-name">power_iteration</span>
                 </h3>
                 <div class="section-content has-notes">
-                    <pre class="code-block"><code class="language-python" data-section="fn-power_iteration">def power_iteration(B, max_iter=100, tol=1e-9):
+                    <pre class="code-block"><code class="language-python" data-section="fn-power_iteration">def power_iteration(B, max_iter=100, tol=1e-15):
     N = len(B)
     v = normalize([random() for _ in range(N)])
     for _ in range(max_iter):
@@ -54,6 +54,55 @@
                             <span class="note-text">eigenvalue</span>
                         </div>
                     </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-deflate">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">deflate</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-deflate">def deflate(B, λ, v):
+    P = outer(v, v)
+    S = scale(λ, P)
+    B = add(B, scale(-1, S))
+    return B
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-eigen_decomposition">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">eigen_decomposition</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-eigen_decomposition">def eigen_decomposition(B, d):
+    eigenvalues = []
+    eigenvectors = []
+    B_copy = B.copy()
+    for _ in range(d):
+        λ, v = power_iteration(B_copy)
+        eigenvalues.append(λ)
+        eigenvectors.append(v)
+        B_copy = deflate(B_copy, λ, v)
+    return eigenvalues, eigenvectors
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-__main__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">Demonstration</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-__main__">if __name__ == &quot;__main__&quot;:
+    B = [[2.0, 1.0], [1.0, 2.0]]
+    eigenvalues, eigenvectors = eigen_decomposition(B, d=2)
+    print(eigenvalues, eigenvectors)
+</code></pre>
                 </div>
             </section>
         </section>

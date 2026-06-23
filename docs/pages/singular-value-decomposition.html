@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singular Value Decomposition — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">☀️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter VII</div>
+            <h1 class="codex-title">Singular Value Decomposition</h1>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-compute_left_singular_vectors">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">compute_left_singular_vectors</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_left_singular_vectors">def compute_left_singular_vectors(A, eigenvectors, S):
+    U = [scale(1 / sv, matmulv(A, v)) for sv, v in zip(S, eigenvectors)]
+    return U
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-svd">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">svd</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-svd">def svd(A):
+    B = matmul(t(A), A)  # B is squared and symmetric
+    N = len(B)
+    eigenvalues, eigenvectors = eigen_decomposition(B, d=N)
+    Vt = [v for v in eigenvectors]
+    S = [sqrt(max(0.0, λ)) for λ in eigenvalues]  # singular values
+    U = compute_left_singular_vectors(A, eigenvectors, S)
+    return U, S, Vt
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-svd">
+                        <div class="margin-note" data-line="2" data-absolute-line="13">
+                            <span class="note-line-ref">l.13</span>
+                            <span class="note-text">B is squared and symmetric</span>
+                        </div>
+                        <div class="margin-note" data-line="6" data-absolute-line="17">
+                            <span class="note-line-ref">l.17</span>
+                            <span class="note-text">singular values</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— vii —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

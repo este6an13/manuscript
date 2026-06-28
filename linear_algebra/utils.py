@@ -79,3 +79,13 @@ def matmul(A, B):
 
 def matmulv(A, v):
     return [dot(row, v) for row in A]
+
+
+def scalev(a, v):
+    return [a * vv for vv in v]
+
+
+def diagonal(v):
+    N = len(v)
+    D = [[0 if i != j else v[i] for i in range(N)] for j in range(N)]
+    return D

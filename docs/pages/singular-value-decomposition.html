@@ -31,16 +31,30 @@
         <section class="codex-chapter" id="source">
             <h2 class="chapter-heading">The Source</h2>
 
-            <section class="codex-section" id="fn-compute_left_singular_vectors">
+            <section class="codex-section" id="fn-compute_U">
                 <h3 class="section-heading">
                     <span class="section-numeral">§ I</span>
-                    <span class="section-name">compute_left_singular_vectors</span>
+                    <span class="section-name">compute_U</span>
                 </h3>
-                <div class="section-content">
-                    <pre class="code-block"><code class="language-python" data-section="fn-compute_left_singular_vectors">def compute_left_singular_vectors(A, eigenvectors, S):
-    U = [scale(1 / sv, matmulv(A, v)) for sv, v in zip(S, eigenvectors)]
-    return U
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_U">def compute_U(A, eigenvectors, S):  # left singular vectors
+    M = len(A)  # number of rows
+    Ut = [
+        (scalev(1 / sv, matmulv(A, v))) if sv &gt; 1e-9 else [0.0] * M
+        for sv, v in zip(S, eigenvectors)
+    ]
+    return t(Ut)
 </code></pre>
+                    <aside class="margin-notes" data-section="fn-compute_U">
+                        <div class="margin-note" data-line="1" data-absolute-line="7">
+                            <span class="note-line-ref">l.7</span>
+                            <span class="note-text">left singular vectors</span>
+                        </div>
+                        <div class="margin-note" data-line="2" data-absolute-line="8">
+                            <span class="note-line-ref">l.8</span>
+                            <span class="note-text">number of rows</span>
+                        </div>
+                    </aside>
                 </div>
             </section>
 
@@ -55,20 +69,51 @@
     N = len(B)
     eigenvalues, eigenvectors = eigen_decomposition(B, d=N)
     Vt = [v for v in eigenvectors]
-    S = [sqrt(max(0.0, λ)) for λ in eigenvalues]  # singular values
-    U = compute_left_singular_vectors(A, eigenvectors, S)
-    return U, S, Vt
+    SV = [sqrt(max(0.0, λ)) for λ in eigenvalues]  # singular values
+    S = diagonal(SV)
+    U = compute_U(A, eigenvectors, SV)
+    return U, S, Vt, SV
 </code></pre>
                     <aside class="margin-notes" data-section="fn-svd">
-                        <div class="margin-note" data-line="2" data-absolute-line="13">
-                            <span class="note-line-ref">l.13</span>
+                        <div class="margin-note" data-line="2" data-absolute-line="17">
+                            <span class="note-line-ref">l.17</span>
                             <span class="note-text">B is squared and symmetric</span>
                         </div>
-                        <div class="margin-note" data-line="6" data-absolute-line="17">
-                            <span class="note-line-ref">l.17</span>
+                        <div class="margin-note" data-line="6" data-absolute-line="21">
+                            <span class="note-line-ref">l.21</span>
                             <span class="note-text">singular values</span>
                         </div>
                     </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-__main__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">Demonstration</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-__main__">if __name__ == &quot;__main__&quot;:
+    A = [
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+    ]
+
+    U, S, Vt, SV = svd(A)
+
+    print(&quot;Singular Values: &quot;, [round(sv, 7) for sv in SV])
+    print(&quot;U: &quot;, U)
+    print(&quot;S: &quot;, S)
+    print(&quot;Vt: &quot;, Vt)
+    print(f&quot;U shape: {len(U)}x{len(U[0])}&quot;)
+    print(f&quot;S shape: {len(S)}x{len(S[0])}&quot;)
+    print(f&quot;Vt shape: {len(Vt)}x{len(Vt[0])}&quot;)
+    print(f&quot;A shape: {len(A)}x{len(A[0])}&quot;)
+
+    reconstructed_A = matmul(matmul(U, S), Vt)
+    print(&quot;Reconstructed A: &quot;, reconstructed_A)
+</code></pre>
                 </div>
             </section>
         </section>

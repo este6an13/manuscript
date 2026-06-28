@@ -246,6 +246,32 @@
 </code></pre>
                 </div>
             </section>
+
+            <section class="codex-section" id="fn-scalev">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ X</span>
+                    <span class="section-name">scalev</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-scalev">def scalev(a, v):
+    return [a * vv for vv in v]
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-diagonal">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ XI</span>
+                    <span class="section-name">diagonal</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-diagonal">def diagonal(v):
+    N = len(v)
+    D = [[0 if i != j else v[i] for i in range(N)] for j in range(N)]
+    return D
+</code></pre>
+                </div>
+            </section>
         </section>
 
         <footer class="codex-footer">

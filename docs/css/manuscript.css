@@ -579,6 +579,19 @@ pre.code-block code {
   font-style: italic;
 }
 
+.py-link {
+  color: var(--code-function);
+  text-decoration: none;
+  border-bottom: 1px dashed var(--code-function);
+  transition: border-bottom 0.2s, background-color 0.2s;
+  cursor: pointer;
+}
+
+.py-link:hover {
+  background-color: rgba(184, 134, 11, 0.15);
+  border-bottom: 1px solid var(--code-function);
+}
+
 /* --- Code Line Highlighting --- */
 .code-line {
   display: inline-block;

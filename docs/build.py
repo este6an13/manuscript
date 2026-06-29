@@ -21,6 +21,7 @@ from __future__ import annotations
 import ast
 import html
 import io
+import json
 import re
 import tokenize
 from pathlib import Path
@@ -220,6 +221,45 @@ def parse_test_classes(source: str) -> list[dict[str, Any]]:
                 }
             )
     return classes
+
+
+def parse_imports(source: str, current_algo_name: str, algo_names: set[str]) -> dict[str, str]:
+    """Parse top-level imports and resolve their page link target.
+
+    Returns a dict mapping imported name -> relative url (e.g. "linear_algebra.html#fn-diagonal")
+    """
+    imports_map: dict[str, str] = {}
+    try:
+        tree = ast.parse(source)
+    except Exception:
+        return imports_map
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            if not node.module:
+                continue
+            module_parts = node.module.split('.')
+            first_part = module_parts[0]
+
+            # Resolve target page
+            if first_part == "main" or first_part == "utils" or node.level > 0:
+                target_page = f"{current_algo_name}.html"
+            elif first_part in algo_names:
+                target_page = f"{first_part}.html"
+            else:
+                continue
+
+            # Link the module itself if it's imported (e.g. "linear_algebra")
+            if first_part in algo_names:
+                imports_map[first_part] = f"{first_part}.html"
+
+            for alias in node.names:
+                name = alias.name
+                if name == '*':
+                    continue
+                local_name = alias.asname or name
+                imports_map[local_name] = f"{target_page}#fn-{name}"
+    return imports_map
 
 
 # ---------------------------------------------------------------------------
@@ -528,6 +568,7 @@ def generate_algorithm_page(
     algo_dir: Path,
     chapter_number: int,
     meta: dict[str, str] | None,
+    algo_names: set[str],
 ) -> str:
     """Generate the full HTML for a single algorithm page."""
 
@@ -551,6 +592,12 @@ def generate_algorithm_page(
     parsed = parse_functions(main_source)
     functions = parsed["functions"]
     main_block = parsed["main_block"]
+
+    # --- Parse imports ---
+    imports_map = parse_imports(main_source, algo_dir.name, algo_names)
+    if tests_source:
+        imports_map.update(parse_imports(tests_source, algo_dir.name, algo_names))
+    imports_json = json.dumps(imports_map, indent=4)
 
     # --- Title ---
     if meta:
@@ -657,6 +704,9 @@ def generate_algorithm_page(
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../css/manuscript.css">
+    <script>
+        window.MANUSCRIPT_IMPORTS = {imports_json};
+    </script>
 </head>
 <body class="manuscript-page">
     <nav class="manuscript-nav">
@@ -780,6 +830,7 @@ def main() -> None:
     if not algo_dirs:
         print("  ⚠  No algorithm directories found. Nothing to build.")
         return
+    algo_names = {d.name for d in algo_dirs}
     for d in algo_dirs:
         print(f"  ✓  Found: {d.name}/")
     print()
@@ -830,7 +881,7 @@ def main() -> None:
         meta = meta_lookup.get(dir_name)
         print(f"  → Chapter {to_roman(chapter_num)}: {entry['algorithm']}...")
 
-        page_html = generate_algorithm_page(algo_dir, chapter_num, meta)
+        page_html = generate_algorithm_page(algo_dir, chapter_num, meta, algo_names)
         out_path = PAGES_DIR / f"{dir_name}.html"
         out_path.write_text(page_html, encoding="utf-8")
         print(f"    ✓  Written: {out_path.relative_to(REPO_ROOT)}")

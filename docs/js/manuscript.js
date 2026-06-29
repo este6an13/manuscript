@@ -156,7 +156,11 @@
         } else if (builtinSet[word]) {
           result += '<span class="py-builtin">' + escaped + '</span>';
         } else {
-          result += escaped;
+          if (window.MANUSCRIPT_IMPORTS && window.MANUSCRIPT_IMPORTS[word]) {
+            result += '<a href="' + window.MANUSCRIPT_IMPORTS[word] + '" class="py-link">' + escaped + '</a>';
+          } else {
+            result += escaped;
+          }
         }
         continue;
       }

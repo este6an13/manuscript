@@ -173,7 +173,8 @@
                     <span class="section-name">compute_ppmi_matrix</span>
                 </h3>
                 <div class="section-content has-notes">
-                    <pre class="code-block"><code class="language-python" data-section="fn-compute_ppmi_matrix">def compute_ppmi_matrix(matrix: list[list[int]]) -&gt; list[list[float]]:
+                    <pre class="code-block"><code class="language-python" data-section="fn-compute_ppmi_matrix"># PPMI: Positive Pointwise Mutual Information
+def compute_ppmi_matrix(matrix: list[list[int]]) -&gt; list[list[float]]:
     N = len(matrix)
     ppmi_matrix = init_matrix(N)
     Sx, Sy, S = compute_sums(matrix)
@@ -189,15 +190,19 @@
     return ppmi_matrix
 </code></pre>
                     <aside class="margin-notes" data-section="fn-compute_ppmi_matrix">
-                        <div class="margin-note" data-line="6" data-absolute-line="67">
+                        <div class="margin-note" data-line="1" data-absolute-line="61">
+                            <span class="note-line-ref">l.61</span>
+                            <span class="note-text">PPMI: Positive Pointwise Mutual Information</span>
+                        </div>
+                        <div class="margin-note" data-line="7" data-absolute-line="67">
                             <span class="note-line-ref">l.67</span>
                             <span class="note-text">prevent dividing by zero</span>
                         </div>
-                        <div class="margin-note" data-line="9" data-absolute-line="70">
+                        <div class="margin-note" data-line="10" data-absolute-line="70">
                             <span class="note-line-ref">l.70</span>
                             <span class="note-text">count of co-occurrences of (x, y)</span>
                         </div>
-                        <div class="margin-note" data-line="10" data-absolute-line="71">
+                        <div class="margin-note" data-line="11" data-absolute-line="71">
                             <span class="note-line-ref">l.71</span>
                             <span class="note-text">probability of (x, y) co-occurence</span>
                         </div>

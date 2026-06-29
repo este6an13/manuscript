@@ -496,6 +496,16 @@ def _extract_lines(source: str, start: int, end: int) -> str:
     return "".join(selected)
 
 
+def _adjust_start_line(start_line: int, comments: dict[int, str], min_line: int) -> int:
+    """Scan backwards to find contiguous comment lines immediately preceding start_line,
+    but not going past min_line.
+    """
+    current = start_line
+    while current - 1 >= min_line and (current - 1) in comments:
+        current -= 1
+    return current
+
+
 def _build_margin_notes(
     comments: dict[int, str],
     start_line: int,
@@ -616,11 +626,14 @@ def generate_algorithm_page(
     # --- Build source sections ---
     source_sections: list[str] = []
     sec_num = 0
+    last_line = 1
 
     for fn in functions:
         sec_num += 1
-        code = _extract_lines(main_source, fn["start_line"], fn["end_line"])
-        notes = _build_margin_notes(comments, fn["start_line"], fn["end_line"])
+        start_line = _adjust_start_line(fn["start_line"], comments, last_line)
+        code = _extract_lines(main_source, start_line, fn["end_line"])
+        notes = _build_margin_notes(comments, start_line, fn["end_line"])
+        last_line = fn["end_line"] + 1
         source_sections.append(
             _render_code_section(
                 section_id=f"fn-{fn['name']}",
@@ -634,11 +647,10 @@ def generate_algorithm_page(
     # __main__ block → "Demonstration"
     if main_block:
         sec_num += 1
-        code = _extract_lines(
-            main_source, main_block["start_line"], main_block["end_line"]
-        )
+        start_line = _adjust_start_line(main_block["start_line"], comments, last_line)
+        code = _extract_lines(main_source, start_line, main_block["end_line"])
         notes = _build_margin_notes(
-            comments, main_block["start_line"], main_block["end_line"]
+            comments, start_line, main_block["end_line"]
         )
         source_sections.append(
             _render_code_section(
@@ -660,11 +672,14 @@ def generate_algorithm_page(
 
         if test_classes:
             test_sections: list[str] = []
+            last_test_line = 1
             for tc_num, tc in enumerate(test_classes, 1):
-                code = _extract_lines(tests_source, tc["start_line"], tc["end_line"])
+                start_line = _adjust_start_line(tc["start_line"], test_comments, last_test_line)
+                code = _extract_lines(tests_source, start_line, tc["end_line"])
                 notes = _build_margin_notes(
-                    test_comments, tc["start_line"], tc["end_line"]
+                    test_comments, start_line, tc["end_line"]
                 )
+                last_test_line = tc["end_line"] + 1
                 test_sections.append(
                     _render_code_section(
                         section_id=f"test-{tc['name']}",

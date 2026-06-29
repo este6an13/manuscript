@@ -18,10 +18,13 @@ Here is the current index of implemented algorithms and concepts:
 
 | Category | Algorithm | Description | Directory |
 | :--- | :--- | :--- | :--- |
+| **Clustering / ML** | **K-Means Clustering** | Unsupervised clustering algorithm to partition data points into K clusters based on Euclidean distance. | [`/kmeans-clustering`](./kmeans-clustering) |
+| **Linear Algebra** | **Linear Algebra Utilities** | Vector and matrix operations implemented from scratch (dot/outer product, norm, transpose, matrix multiplication). | [`/linear_algebra`](./linear_algebra) |
+| **Linear Algebra** | **Power Iteration & Deflation** | Iterative algorithm to compute eigenvalues and eigenvectors of a symmetric matrix. | [`/power_iteration`](./power_iteration) |
+| **Linear Algebra / ML** | **Singular Value Decomposition (SVD)** | Matrix factorization method to decompose a matrix into singular vectors and singular values. | [`/singular-value-decomposition`](./singular-value-decomposition) |
+| **NLP / Semantics** | **Co-occurrence Matrix & PPMI** | Constructing word co-occurrence matrices from text and computing Positive Pointwise Mutual Information (PPMI). | [`/co-occurrence-matrix`](./co-occurrence-matrix) |
 | **NLP / Tokenization** | **Byte Pair Encoding (BPE)** | The subword tokenization algorithm used by GPT and other modern LLMs to compress text into token IDs. | [`/byte-pair-encoding`](./byte-pair-encoding) |
 | **NLP / Tokenization** | **N-gram Tokenization** | Character-level and word-level N-gram generator to split text into sequence patterns of length N. | [`/ngram-tokenization`](./ngram-tokenization) |
-| **NLP / Semantics** | **Co-occurrence Matrix & PPMI** | Constructing word co-occurrence matrices from text and computing Positive Pointwise Mutual Information (PPMI). | [`/co-occurrence-matrix`](./co-occurrence-matrix) |
-| **Clustering / ML** | **K-Means Clustering** | Unsupervised clustering algorithm to partition data points into K clusters based on Euclidean distance. | [`/kmeans-clustering`](./kmeans-clustering) |
 
 ---
 

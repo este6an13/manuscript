@@ -11,7 +11,8 @@
     <link rel="stylesheet" href="../css/manuscript.css">
     <script>
         window.MANUSCRIPT_IMPORTS = {
-    "calculate_euclidean_distance": "kmeans-clustering.html#fn-calculate_euclidean_distance"
+    "geometry": "geometry.html",
+    "euclidean_distance": "geometry.html#fn-euclidean_distance"
 };
     </script>
 </head>
@@ -28,7 +29,7 @@
     <article class="codex">
         <div class="codex-border codex-border-top"></div>
         <header class="codex-header">
-            <div class="chapter-numeral">Chapter IV</div>
+            <div class="chapter-numeral">Chapter I</div>
             <h1 class="codex-title">K-Means Clustering</h1>
             <div class="codex-subtitle">Clustering / ML</div>
             <div class="ornamental-rule">❦ ❦ ❦</div>
@@ -37,36 +38,9 @@
         <section class="codex-chapter" id="source">
             <h2 class="chapter-heading">The Source</h2>
 
-            <section class="codex-section" id="fn-calculate_euclidean_distance">
-                <h3 class="section-heading">
-                    <span class="section-numeral">§ I</span>
-                    <span class="section-name">calculate_euclidean_distance</span>
-                </h3>
-                <div class="section-content has-notes">
-                    <pre class="code-block"><code class="language-python" data-section="fn-calculate_euclidean_distance">def calculate_euclidean_distance(p: tuple[float], q: tuple[float]) -&gt; float:
-    n = len(p)
-    m = len(q)
-    if m != n:
-        raise ValueError(&quot;p, q must have the same dimension&quot;)
-    if n == 0:  # m == 0
-        raise ValueError(&quot;p, q dimension must be greater than zero&quot;)
-    squares_sum = 0
-    for i in range(n):
-        squares_sum += (p[i] - q[i]) ** 2
-    return sqrt(squares_sum)
-</code></pre>
-                    <aside class="margin-notes" data-section="fn-calculate_euclidean_distance">
-                        <div class="margin-note" data-line="6" data-absolute-line="10">
-                            <span class="note-line-ref">l.10</span>
-                            <span class="note-text">m == 0</span>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-
             <section class="codex-section" id="fn-compute_centroid">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ II</span>
+                    <span class="section-numeral">§ I</span>
                     <span class="section-name">compute_centroid</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -84,8 +58,8 @@
     return tuple(centroid)
 </code></pre>
                     <aside class="margin-notes" data-section="fn-compute_centroid">
-                        <div class="margin-note" data-line="5" data-absolute-line="22">
-                            <span class="note-line-ref">l.22</span>
+                        <div class="margin-note" data-line="5" data-absolute-line="8">
+                            <span class="note-line-ref">l.8</span>
                             <span class="note-text">number of components (dimension)</span>
                         </div>
                     </aside>
@@ -94,7 +68,7 @@
 
             <section class="codex-section" id="fn-stopping_condition">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ III</span>
+                    <span class="section-numeral">§ II</span>
                     <span class="section-name">stopping_condition</span>
                 </h3>
                 <div class="section-content">
@@ -105,7 +79,7 @@
         raise ValueError(&quot;P, Q must have the same number of points&quot;)
     stop = True
     for p, q in zip(P, Q):
-        distance = calculate_euclidean_distance(p, q)
+        distance = euclidean_distance(p, q)
         if distance &gt;= 0.001:
             stop = False
             break
@@ -116,7 +90,7 @@
 
             <section class="codex-section" id="fn-find_nearest_centroid">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ IV</span>
+                    <span class="section-numeral">§ III</span>
                     <span class="section-name">find_nearest_centroid</span>
                 </h3>
                 <div class="section-content">
@@ -125,7 +99,7 @@
     nearest_centroid = -1
     K = len(centroids)
     for k in range(K):
-        distance = calculate_euclidean_distance(point, centroids[k])
+        distance = euclidean_distance(point, centroids[k])
         if distance &lt; min_distance:
             min_distance = distance
             nearest_centroid = k
@@ -136,7 +110,7 @@
 
             <section class="codex-section" id="fn-compute_new_centroids">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ V</span>
+                    <span class="section-numeral">§ IV</span>
                     <span class="section-name">compute_new_centroids</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -156,12 +130,12 @@
     return new_centroids
 </code></pre>
                     <aside class="margin-notes" data-section="fn-compute_new_centroids">
-                        <div class="margin-note" data-line="5" data-absolute-line="62">
-                            <span class="note-line-ref">l.62</span>
+                        <div class="margin-note" data-line="5" data-absolute-line="48">
+                            <span class="note-line-ref">l.48</span>
                             <span class="note-text">for each cluster, get all points assigned and compute their centroid</span>
                         </div>
-                        <div class="margin-note" data-line="10" data-absolute-line="67">
-                            <span class="note-line-ref">l.67</span>
+                        <div class="margin-note" data-line="10" data-absolute-line="53">
+                            <span class="note-line-ref">l.53</span>
                             <span class="note-text">set a random point as centroid</span>
                         </div>
                     </aside>
@@ -170,7 +144,7 @@
 
             <section class="codex-section" id="fn-kmeans_clustering">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ VI</span>
+                    <span class="section-numeral">§ V</span>
                     <span class="section-name">kmeans_clustering</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -201,36 +175,36 @@
     return points, clusters_tags
 </code></pre>
                     <aside class="margin-notes" data-section="fn-kmeans_clustering">
-                        <div class="margin-note" data-line="2" data-absolute-line="75">
-                            <span class="note-line-ref">l.75</span>
+                        <div class="margin-note" data-line="2" data-absolute-line="61">
+                            <span class="note-line-ref">l.61</span>
                             <span class="note-text">dynamic K adjustment: Number of unique points must be at least K</span>
                         </div>
-                        <div class="margin-note" data-line="8" data-absolute-line="81">
-                            <span class="note-line-ref">l.81</span>
+                        <div class="margin-note" data-line="8" data-absolute-line="67">
+                            <span class="note-line-ref">l.67</span>
                             <span class="note-text">chosen at random from the datapoints (deliberatr)</span>
                         </div>
-                        <div class="margin-note" data-line="10" data-absolute-line="83">
-                            <span class="note-line-ref">l.83</span>
+                        <div class="margin-note" data-line="10" data-absolute-line="69">
+                            <span class="note-line-ref">l.69</span>
                             <span class="note-text">the cluster assigned to each point</span>
                         </div>
-                        <div class="margin-note" data-line="13" data-absolute-line="86">
-                            <span class="note-line-ref">l.86</span>
+                        <div class="margin-note" data-line="13" data-absolute-line="72">
+                            <span class="note-line-ref">l.72</span>
                             <span class="note-text">find nearest centroid for each point</span>
                         </div>
-                        <div class="margin-note" data-line="15" data-absolute-line="88">
-                            <span class="note-line-ref">l.88</span>
+                        <div class="margin-note" data-line="15" data-absolute-line="74">
+                            <span class="note-line-ref">l.74</span>
                             <span class="note-text">assigned nearest centroid to point i</span>
                         </div>
-                        <div class="margin-note" data-line="17" data-absolute-line="90">
-                            <span class="note-line-ref">l.90</span>
+                        <div class="margin-note" data-line="17" data-absolute-line="76">
+                            <span class="note-line-ref">l.76</span>
                             <span class="note-text">compute new centroids</span>
                         </div>
-                        <div class="margin-note" data-line="19" data-absolute-line="92">
-                            <span class="note-line-ref">l.92</span>
+                        <div class="margin-note" data-line="19" data-absolute-line="78">
+                            <span class="note-line-ref">l.78</span>
                             <span class="note-text">check stopping condition</span>
                         </div>
-                        <div class="margin-note" data-line="22" data-absolute-line="95">
-                            <span class="note-line-ref">l.95</span>
+                        <div class="margin-note" data-line="22" data-absolute-line="81">
+                            <span class="note-line-ref">l.81</span>
                             <span class="note-text">prepare next iteration</span>
                         </div>
                     </aside>
@@ -239,7 +213,7 @@
 
             <section class="codex-section" id="fn-__main__">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ VII</span>
+                    <span class="section-numeral">§ VI</span>
                     <span class="section-name">Demonstration</span>
                 </h3>
                 <div class="section-content">
@@ -255,54 +229,9 @@
             </section>
         </section>
 
-        <div class="ornamental-divider">✦ ✦ ✦</div>
-        <section class="codex-chapter" id="verification">
-            <h2 class="chapter-heading">Verification Appendix</h2>
-
-            <section class="codex-section" id="test-TestCalculateEuclideanDistance">
-                <h3 class="section-heading">
-                    <span class="section-numeral">§ I</span>
-                    <span class="section-name">TestCalculateEuclideanDistance</span>
-                </h3>
-                <div class="section-content has-notes">
-                    <pre class="code-block"><code class="language-python" data-section="test-TestCalculateEuclideanDistance">class TestCalculateEuclideanDistance(unittest.TestCase):
-    def test(self):
-        f = calculate_euclidean_distance
-        tests = {
-            &quot;given_equal_points_return_zero&quot;: {&quot;p&quot;: [1.0], &quot;q&quot;: [1.0], &quot;want&quot;: 0.0},
-            &quot;given_empty_points_raise_error&quot;: {&quot;p&quot;: [], &quot;q&quot;: [], &quot;error&quot;: &quot;zero&quot;},
-            &quot;given_different_length_points_raise_error&quot;: {
-                &quot;p&quot;: [1.0],
-                &quot;q&quot;: [1.0, 2.0],
-                &quot;error&quot;: &quot;dimension&quot;,
-            },
-            &quot;given_points_return_distance_0&quot;: {&quot;p&quot;: [1.0], &quot;q&quot;: [2.0], &quot;want&quot;: 1.0},
-            &quot;given_points_return_distance_1&quot;: {
-                &quot;p&quot;: [0.0, 0.0],
-                &quot;q&quot;: [1.0, 1.0],
-                &quot;want&quot;: sqrt(2),  # hypotenuse of unit triangle
-            },
-        }
-        for name, case in tests.items():
-            if &quot;error&quot; in case:
-                with self.assertRaisesRegex(ValueError, case[&quot;error&quot;]):
-                    f(case[&quot;p&quot;], case[&quot;q&quot;])
-                continue
-            with self.subTest(name):
-                self.assertEqual(f(case[&quot;p&quot;], case[&quot;q&quot;]), case[&quot;want&quot;])
-</code></pre>
-                    <aside class="margin-notes" data-section="test-TestCalculateEuclideanDistance">
-                        <div class="margin-note" data-line="16" data-absolute-line="22">
-                            <span class="note-line-ref">l.22</span>
-                            <span class="note-text">hypotenuse of unit triangle</span>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-        </section>
         <footer class="codex-footer">
             <div class="ornamental-rule">❦</div>
-            <span class="page-number">— iv —</span>
+            <span class="page-number">— i —</span>
         </footer>
         <div class="codex-border codex-border-bottom"></div>
     </article>

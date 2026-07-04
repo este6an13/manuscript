@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+    <script>
+        window.MANUSCRIPT_IMPORTS = {
+    "euclidean_distance": "geometry.html#fn-euclidean_distance"
+};
+    </script>
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">☀️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter VIII</div>
+            <h1 class="codex-title">Geometry</h1>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-euclidean_distance">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">euclidean_distance</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-euclidean_distance">def euclidean_distance(p: tuple[float], q: tuple[float]) -&gt; float:
+    n = len(p)
+    m = len(q)
+    if m != n:
+        raise ValueError(&quot;p, q must have the same dimension&quot;)
+    if n == 0:  # m == 0
+        raise ValueError(&quot;p, q dimension must be greater than zero&quot;)
+    squares_sum = 0
+    for i in range(n):
+        squares_sum += (p[i] - q[i]) ** 2
+    return sqrt(squares_sum)
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-euclidean_distance">
+                        <div class="margin-note" data-line="6" data-absolute-line="8">
+                            <span class="note-line-ref">l.8</span>
+                            <span class="note-text">m == 0</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <div class="ornamental-divider">✦ ✦ ✦</div>
+        <section class="codex-chapter" id="verification">
+            <h2 class="chapter-heading">Verification Appendix</h2>
+
+            <section class="codex-section" id="test-TestCalculateEuclideanDistance">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">TestCalculateEuclideanDistance</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="test-TestCalculateEuclideanDistance">class TestCalculateEuclideanDistance(unittest.TestCase):
+    def test(self):
+        f = euclidean_distance
+        tests = {
+            &quot;given_equal_points_return_zero&quot;: {&quot;p&quot;: [1.0], &quot;q&quot;: [1.0], &quot;want&quot;: 0.0},
+            &quot;given_empty_points_raise_error&quot;: {&quot;p&quot;: [], &quot;q&quot;: [], &quot;error&quot;: &quot;zero&quot;},
+            &quot;given_different_length_points_raise_error&quot;: {
+                &quot;p&quot;: [1.0],
+                &quot;q&quot;: [1.0, 2.0],
+                &quot;error&quot;: &quot;dimension&quot;,
+            },
+            &quot;given_points_return_distance_0&quot;: {&quot;p&quot;: [1.0], &quot;q&quot;: [2.0], &quot;want&quot;: 1.0},
+            &quot;given_points_return_distance_1&quot;: {
+                &quot;p&quot;: [0.0, 0.0],
+                &quot;q&quot;: [1.0, 1.0],
+                &quot;want&quot;: sqrt(2),  # hypotenuse of unit triangle
+            },
+        }
+        for name, case in tests.items():
+            if &quot;error&quot; in case:
+                with self.assertRaisesRegex(ValueError, case[&quot;error&quot;]):
+                    f(case[&quot;p&quot;], case[&quot;q&quot;])
+                continue
+            with self.subTest(name):
+                self.assertEqual(f(case[&quot;p&quot;], case[&quot;q&quot;]), case[&quot;want&quot;])
+</code></pre>
+                    <aside class="margin-notes" data-section="test-TestCalculateEuclideanDistance">
+                        <div class="margin-note" data-line="16" data-absolute-line="22">
+                            <span class="note-line-ref">l.22</span>
+                            <span class="note-text">hypotenuse of unit triangle</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— viii —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

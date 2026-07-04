@@ -1,12 +1,12 @@
 import unittest
 from math import sqrt
 
-from main import calculate_euclidean_distance
+from utils import euclidean_distance
 
 
 class TestCalculateEuclideanDistance(unittest.TestCase):
     def test(self):
-        f = calculate_euclidean_distance
+        f = euclidean_distance
         tests = {
             "given_equal_points_return_zero": {"p": [1.0], "q": [1.0], "want": 0.0},
             "given_empty_points_raise_error": {"p": [], "q": [], "error": "zero"},

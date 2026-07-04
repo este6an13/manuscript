@@ -1,19 +1,5 @@
-from math import sqrt
 from random import sample
-
-
-def calculate_euclidean_distance(p: tuple[float], q: tuple[float]) -> float:
-    n = len(p)
-    m = len(q)
-    if m != n:
-        raise ValueError("p, q must have the same dimension")
-    if n == 0:  # m == 0
-        raise ValueError("p, q dimension must be greater than zero")
-    squares_sum = 0
-    for i in range(n):
-        squares_sum += (p[i] - q[i]) ** 2
-    return sqrt(squares_sum)
-
+from geometry.utils import euclidean_distance
 
 def compute_centroid(points: list[tuple[float]]) -> tuple[float]:
     N = len(points)
@@ -36,7 +22,7 @@ def stopping_condition(P, Q):
         raise ValueError("P, Q must have the same number of points")
     stop = True
     for p, q in zip(P, Q):
-        distance = calculate_euclidean_distance(p, q)
+        distance = euclidean_distance(p, q)
         if distance >= 0.001:
             stop = False
             break
@@ -48,7 +34,7 @@ def find_nearest_centroid(point: tuple[float], centroids: list[tuple[float]]) ->
     nearest_centroid = -1
     K = len(centroids)
     for k in range(K):
-        distance = calculate_euclidean_distance(point, centroids[k])
+        distance = euclidean_distance(point, centroids[k])
         if distance < min_distance:
             min_distance = distance
             nearest_centroid = k

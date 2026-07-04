@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linear Algebra — Manuscript</title>
+    <title>Linear Algebra Utilities — Manuscript</title>
     <link rel="icon" type="image/png" href="../img/scroll.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,8 +26,9 @@
     <article class="codex">
         <div class="codex-border codex-border-top"></div>
         <header class="codex-header">
-            <div class="chapter-numeral">Chapter V</div>
-            <h1 class="codex-title">Linear Algebra</h1>
+            <div class="chapter-numeral">Chapter II</div>
+            <h1 class="codex-title">Linear Algebra Utilities</h1>
+            <div class="codex-subtitle">Linear Algebra</div>
             <div class="ornamental-rule">❦ ❦ ❦</div>
         </header>
 
@@ -187,7 +188,8 @@
     C = [[0 for _ in range(N)] for _ in range(M)]
     for i in range(M):
         for j in range(N):
-            C[i][j] = A[i][j] + B[i][j]
+            C[i][j] = A[i
+            ][j] + B[i][j]
     return C
 </code></pre>
                     <aside class="margin-notes" data-section="fn-add">
@@ -226,12 +228,12 @@
     return AB
 </code></pre>
                     <aside class="margin-notes" data-section="fn-matmul">
-                        <div class="margin-note" data-line="2" data-absolute-line="64">
-                            <span class="note-line-ref">l.64</span>
+                        <div class="margin-note" data-line="2" data-absolute-line="65">
+                            <span class="note-line-ref">l.65</span>
                             <span class="note-text">rows of new matrix</span>
                         </div>
-                        <div class="margin-note" data-line="5" data-absolute-line="67">
-                            <span class="note-line-ref">l.67</span>
+                        <div class="margin-note" data-line="5" data-absolute-line="68">
+                            <span class="note-line-ref">l.68</span>
                             <span class="note-text">columns of new matrix</span>
                         </div>
                     </aside>
@@ -262,9 +264,21 @@
                 </div>
             </section>
 
-            <section class="codex-section" id="fn-diagonal">
+            <section class="codex-section" id="fn-addv">
                 <h3 class="section-heading">
                     <span class="section-numeral">§ XI</span>
+                    <span class="section-name">addv</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-addv">def addv(u, v):
+    return [uu + vv for uu, vv in zip(u, v)]
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-diagonal">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ XII</span>
                     <span class="section-name">diagonal</span>
                 </h3>
                 <div class="section-content">
@@ -279,7 +293,7 @@
 
         <footer class="codex-footer">
             <div class="ornamental-rule">❦</div>
-            <span class="page-number">— v —</span>
+            <span class="page-number">— ii —</span>
         </footer>
         <div class="codex-border codex-border-bottom"></div>
     </article>

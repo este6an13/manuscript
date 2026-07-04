@@ -56,7 +56,8 @@ def add(A, B):
     C = [[0 for _ in range(N)] for _ in range(M)]
     for i in range(M):
         for j in range(N):
-            C[i][j] = A[i][j] + B[i][j]
+            C[i][j] = A[i
+            ][j] + B[i][j]
     return C
 
 
@@ -83,6 +84,10 @@ def matmulv(A, v):
 
 def scalev(a, v):
     return [a * vv for vv in v]
+
+
+def addv(u, v):
+    return [uu + vv for uu, vv in zip(u, v)]
 
 
 def diagonal(v):

@@ -1,6 +1,7 @@
 from random import sample
 from geometry.utils import euclidean_distance
 
+
 def compute_centroid(points: list[tuple[float]]) -> tuple[float]:
     N = len(points)
     if N == 0:

@@ -1,5 +1,6 @@
 from math import sqrt
 
+
 def euclidean_distance(p: tuple[float], q: tuple[float]) -> float:
     n = len(p)
     m = len(q)

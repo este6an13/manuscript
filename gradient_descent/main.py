@@ -1,8 +1,8 @@
 from linear_algebra.utils import addv, scalev
 from geometry.utils import euclidean_distance
 
-f = lambda params, new_params, tol : euclidean_distance(params, new_params) < tol  # noqa: E731
-g = lambda i, max_iters : i > max_iters # noqa: E731
+f = lambda params, new_params, tol: euclidean_distance(params, new_params) < tol  # noqa: E731
+g = lambda i, max_iters: i > max_iters  # noqa: E731
 
 
 def stopping_condition(f, g):
@@ -23,13 +23,15 @@ def gradient_descent(fn, params, lr, max_iters=1000, tol=1e-12):
 
 
 if __name__ == "__main__":
+
     def fn(params):
         x = params[0]
         return [2 * (x - 3)]
+
     params = [0.0]
     lr = 0.1
     params = gradient_descent(fn, params, lr)
-    print(params) #  [2.9999999999963927]
+    print(params)  #  [2.9999999999963927]
 
     def fn(params):
         x = params[0]
@@ -39,5 +41,4 @@ if __name__ == "__main__":
     params = [0.0, 0.0]
     lr = 0.1
     params = gradient_descent(fn, params, lr)
-    print(params) #  [2.499999999997129, -5.499999999993069]
-
+    print(params)  #  [2.499999999997129, -5.499999999993069]

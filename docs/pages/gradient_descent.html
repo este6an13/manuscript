@@ -13,7 +13,9 @@
         window.MANUSCRIPT_IMPORTS = {
     "linear_algebra": "linear_algebra.html",
     "addv": "linear_algebra.html#fn-addv",
-    "scalev": "linear_algebra.html#fn-scalev"
+    "scalev": "linear_algebra.html#fn-scalev",
+    "geometry": "geometry.html",
+    "euclidean_distance": "geometry.html#fn-euclidean_distance"
 };
     </script>
 </head>
@@ -30,36 +32,57 @@
     <article class="codex">
         <div class="codex-border codex-border-top"></div>
         <header class="codex-header">
-            <div class="chapter-numeral">Chapter IX</div>
+            <div class="chapter-numeral">Chapter VIII</div>
             <h1 class="codex-title">Gradient Descent</h1>
+            <div class="codex-subtitle">Optimization / ML</div>
             <div class="ornamental-rule">❦ ❦ ❦</div>
         </header>
 
         <section class="codex-chapter" id="source">
             <h2 class="chapter-heading">The Source</h2>
 
-            <section class="codex-section" id="fn-gradient_descent">
+            <section class="codex-section" id="fn-stopping_condition">
                 <h3 class="section-heading">
                     <span class="section-numeral">§ I</span>
-                    <span class="section-name">gradient_descent</span>
+                    <span class="section-name">stopping_condition</span>
                 </h3>
                 <div class="section-content">
-                    <pre class="code-block"><code class="language-python" data-section="fn-gradient_descent">def gradient_descent(fn, params, lr, max_iters=1000):
+                    <pre class="code-block"><code class="language-python" data-section="fn-stopping_condition">def stopping_condition(f, g):
+    if any([f, g]):
+        return True
+    return False
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-gradient_descent">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">gradient_descent</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-gradient_descent">def gradient_descent(fn, params, lr, max_iters=1000, tol=1e-12):
     i = 0
     while True:
-        new_params = addv(params, scalev(-lr, fn(params)))
-        params = new_params
         i += 1
-        if i &gt;= max_iters:
-            break
-    return params
+        new_params = addv(params, scalev(-lr, fn(params)))
+        if stopping_condition(f(params, new_params, tol), g(i, max_iters)):
+            return new_params
+        # next iteration
+        params = new_params
 </code></pre>
+                    <aside class="margin-notes" data-section="fn-gradient_descent">
+                        <div class="margin-note" data-line="8" data-absolute-line="20">
+                            <span class="note-line-ref">l.20</span>
+                            <span class="note-text">next iteration</span>
+                        </div>
+                    </aside>
                 </div>
             </section>
 
             <section class="codex-section" id="fn-__main__">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ II</span>
+                    <span class="section-numeral">§ III</span>
                     <span class="section-name">Demonstration</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -70,7 +93,7 @@
     params = [0.0]
     lr = 0.1
     params = gradient_descent(fn, params, lr)
-    print(params) # [2.999999999999999]
+    print(params) #  [2.9999999999963927]
 
     def fn(params):
         x = params[0]
@@ -80,16 +103,16 @@
     params = [0.0, 0.0]
     lr = 0.1
     params = gradient_descent(fn, params, lr)
-    print(params) # [2.4999999999999987, -5.4999999999999964]
+    print(params) #  [2.499999999997129, -5.499999999993069]
 </code></pre>
                     <aside class="margin-notes" data-section="fn-__main__">
-                        <div class="margin-note" data-line="8" data-absolute-line="21">
-                            <span class="note-line-ref">l.21</span>
-                            <span class="note-text">[2.999999999999999]</span>
-                        </div>
-                        <div class="margin-note" data-line="18" data-absolute-line="31">
+                        <div class="margin-note" data-line="8" data-absolute-line="31">
                             <span class="note-line-ref">l.31</span>
-                            <span class="note-text">[2.4999999999999987, -5.4999999999999964]</span>
+                            <span class="note-text">[2.9999999999963927]</span>
+                        </div>
+                        <div class="margin-note" data-line="18" data-absolute-line="41">
+                            <span class="note-line-ref">l.41</span>
+                            <span class="note-text">[2.499999999997129, -5.499999999993069]</span>
                         </div>
                     </aside>
                 </div>
@@ -98,7 +121,7 @@
 
         <footer class="codex-footer">
             <div class="ornamental-rule">❦</div>
-            <span class="page-number">— ix —</span>
+            <span class="page-number">— viii —</span>
         </footer>
         <div class="codex-border codex-border-bottom"></div>
     </article>

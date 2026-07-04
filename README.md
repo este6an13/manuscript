@@ -25,6 +25,8 @@ Here is the current index of implemented algorithms and concepts:
 | **NLP / Semantics** | **Co-occurrence Matrix & PPMI** | Constructing word co-occurrence matrices from text and computing Positive Pointwise Mutual Information (PPMI). | [`/co-occurrence-matrix`](./co-occurrence-matrix) |
 | **NLP / Tokenization** | **Byte Pair Encoding (BPE)** | The subword tokenization algorithm used by GPT and other modern LLMs to compress text into token IDs. | [`/byte-pair-encoding`](./byte-pair-encoding) |
 | **NLP / Tokenization** | **N-gram Tokenization** | Character-level and word-level N-gram generator to split text into sequence patterns of length N. | [`/ngram-tokenization`](./ngram-tokenization) |
+| **Optimization / ML** | **Gradient Descent** | First-principles multi-variable gradient descent optimizer using custom linear algebra and geometry utilities. | [`/gradient_descent`](./gradient_descent) |
+| **Geometry** | **Geometry Utilities** | Basic geometric calculations, including element-wise Euclidean distance for arbitrary dimensions, implemented from scratch. | [`/geometry`](./geometry) |
 
 ---
 

@@ -161,6 +161,31 @@ def parse_functions(source: str) -> dict[str, Any]:
                     "docstring": _get_docstring(node),
                 }
             )
+        elif isinstance(node, (ast.Assign, ast.AnnAssign)):
+            names = []
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        names.append(target.id)
+                    elif isinstance(target, (ast.Tuple, ast.List)):
+                        for elt in target.elts:
+                            if isinstance(elt, ast.Name):
+                                names.append(elt.id)
+            elif isinstance(node, ast.AnnAssign):
+                if isinstance(node.target, ast.Name):
+                    names.append(node.target.id)
+
+            names = [name for name in names if not name.startswith("_")]
+
+            if names:
+                functions.append(
+                    {
+                        "name": ", ".join(names),
+                        "start_line": node.lineno,
+                        "end_line": node.end_lineno or node.lineno,
+                        "docstring": None,
+                    }
+                )
         elif isinstance(node, ast.If):
             # Detect:  if __name__ == "__main__":
             test = node.test
@@ -636,7 +661,7 @@ def generate_algorithm_page(
         last_line = fn["end_line"] + 1
         source_sections.append(
             _render_code_section(
-                section_id=f"fn-{fn['name']}",
+                section_id=f"fn-{fn['name'].split(',')[0].strip()}",
                 section_numeral=to_roman(sec_num, upper=True),
                 section_name=fn["name"],
                 code_text=code,

@@ -41,9 +41,43 @@
         <section class="codex-chapter" id="source">
             <h2 class="chapter-heading">The Source</h2>
 
-            <section class="codex-section" id="fn-stopping_condition">
+            <section class="codex-section" id="fn-f">
                 <h3 class="section-heading">
                     <span class="section-numeral">§ I</span>
+                    <span class="section-name">f</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-f">f = lambda params, new_params, tol : euclidean_distance(params, new_params) &lt; tol  # noqa: E731
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-f">
+                        <div class="margin-note" data-line="1" data-absolute-line="4">
+                            <span class="note-line-ref">l.4</span>
+                            <span class="note-text">noqa: E731</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-g">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">g</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-g">g = lambda i, max_iters : i &gt; max_iters # noqa: E731
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-g">
+                        <div class="margin-note" data-line="1" data-absolute-line="5">
+                            <span class="note-line-ref">l.5</span>
+                            <span class="note-text">noqa: E731</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-stopping_condition">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
                     <span class="section-name">stopping_condition</span>
                 </h3>
                 <div class="section-content">
@@ -57,7 +91,7 @@
 
             <section class="codex-section" id="fn-gradient_descent">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ II</span>
+                    <span class="section-numeral">§ IV</span>
                     <span class="section-name">gradient_descent</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -72,8 +106,8 @@
         params = new_params
 </code></pre>
                     <aside class="margin-notes" data-section="fn-gradient_descent">
-                        <div class="margin-note" data-line="8" data-absolute-line="20">
-                            <span class="note-line-ref">l.20</span>
+                        <div class="margin-note" data-line="8" data-absolute-line="21">
+                            <span class="note-line-ref">l.21</span>
                             <span class="note-text">next iteration</span>
                         </div>
                     </aside>
@@ -82,7 +116,7 @@
 
             <section class="codex-section" id="fn-__main__">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ III</span>
+                    <span class="section-numeral">§ V</span>
                     <span class="section-name">Demonstration</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -106,12 +140,12 @@
     print(params) #  [2.499999999997129, -5.499999999993069]
 </code></pre>
                     <aside class="margin-notes" data-section="fn-__main__">
-                        <div class="margin-note" data-line="8" data-absolute-line="31">
-                            <span class="note-line-ref">l.31</span>
+                        <div class="margin-note" data-line="8" data-absolute-line="32">
+                            <span class="note-line-ref">l.32</span>
                             <span class="note-text">[2.9999999999963927]</span>
                         </div>
-                        <div class="margin-note" data-line="18" data-absolute-line="41">
-                            <span class="note-line-ref">l.41</span>
+                        <div class="margin-note" data-line="18" data-absolute-line="42">
+                            <span class="note-line-ref">l.42</span>
                             <span class="note-text">[2.499999999997129, -5.499999999993069]</span>
                         </div>
                     </aside>

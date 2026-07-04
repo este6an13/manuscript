@@ -4,6 +4,7 @@ from geometry.utils import euclidean_distance
 f = lambda params, new_params, tol : euclidean_distance(params, new_params) < tol  # noqa: E731
 g = lambda i, max_iters : i > max_iters # noqa: E731
 
+
 def stopping_condition(f, g):
     if any([f, g]):
         return True

@@ -155,11 +155,15 @@ class DecisionTree:
 
     # traverse the tree recursively to predict the class of a sample: the leaf value (class) is the predicted value
     def _predict_sample(self, x, node: Node):
+        # recursion base case
         if node.is_leaf():
-            return node.value
+            return node.value  # leaf node value is the predicted class
+        # feature indicates the column to check, xx is the cell value
         xx = x[node.feature]
+        # if "le", bifurcate to the left
         if xx <= node.threshold:
             return self._predict_sample(x, node.left)
+        # if "gt", bifurcate to the right
         return self._predict_sample(x, node.right)
 
     # predict is running the tree traversal (_predict_sample) on each sample of the dataset X

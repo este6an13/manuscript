@@ -135,7 +135,7 @@ def _get_docstring(node: ast.AST) -> str | None:
 
 
 def parse_functions(source: str) -> dict[str, Any]:
-    """Parse top-level functions and detect ``if __name__ == "__main__"`` block.
+    """Parse top-level functions, classes (with their methods), and detect ``if __name__ == "__main__"`` block.
 
     Returns::
 
@@ -150,6 +150,7 @@ def parse_functions(source: str) -> dict[str, Any]:
     tree = ast.parse(source)
     functions: list[dict[str, Any]] = []
     main_block: dict[str, int] | None = None
+    comments = extract_comments(source)
 
     for node in ast.iter_child_nodes(tree):
         if isinstance(node, ast.FunctionDef):
@@ -161,6 +162,35 @@ def parse_functions(source: str) -> dict[str, Any]:
                     "docstring": _get_docstring(node),
                 }
             )
+        elif isinstance(node, ast.ClassDef):
+            methods = [item for item in node.body if isinstance(item, ast.FunctionDef)]
+            if methods:
+                # Class header starts at class declaration and ends right before the first method starts (accounting for comments)
+                first_method_start = methods[0].lineno
+                first_method_adjusted_start = _adjust_start_line(
+                    first_method_start, comments, node.lineno + 1
+                )
+                class_end_line = first_method_adjusted_start - 1
+            else:
+                class_end_line = node.end_lineno or node.lineno
+
+            functions.append(
+                {
+                    "name": f"class {node.name}",
+                    "start_line": node.lineno,
+                    "end_line": class_end_line,
+                    "docstring": _get_docstring(node),
+                }
+            )
+            for method in methods:
+                functions.append(
+                    {
+                        "name": f"{node.name}.{method.name}",
+                        "start_line": method.lineno,
+                        "end_line": method.end_lineno or method.lineno,
+                        "docstring": _get_docstring(method),
+                    }
+                )
         elif isinstance(node, (ast.Assign, ast.AnnAssign)):
             names = []
             if isinstance(node, ast.Assign):
@@ -248,7 +278,9 @@ def parse_test_classes(source: str) -> list[dict[str, Any]]:
     return classes
 
 
-def parse_imports(source: str, current_algo_name: str, algo_names: set[str]) -> dict[str, str]:
+def parse_imports(
+    source: str, current_algo_name: str, algo_names: set[str]
+) -> dict[str, str]:
     """Parse top-level imports and resolve their page link target.
 
     Returns a dict mapping imported name -> relative url (e.g. "linear_algebra.html#fn-diagonal")
@@ -263,7 +295,7 @@ def parse_imports(source: str, current_algo_name: str, algo_names: set[str]) -> 
         if isinstance(node, ast.ImportFrom):
             if not node.module:
                 continue
-            module_parts = node.module.split('.')
+            module_parts = node.module.split(".")
             first_part = module_parts[0]
 
             # Resolve target page
@@ -280,7 +312,7 @@ def parse_imports(source: str, current_algo_name: str, algo_names: set[str]) -> 
 
             for alias in node.names:
                 name = alias.name
-                if name == '*':
+                if name == "*":
                     continue
                 local_name = alias.asname or name
                 imports_map[local_name] = f"{target_page}#fn-{name}"
@@ -659,9 +691,17 @@ def generate_algorithm_page(
         code = _extract_lines(main_source, start_line, fn["end_line"])
         notes = _build_margin_notes(comments, start_line, fn["end_line"])
         last_line = fn["end_line"] + 1
+
+        # Clean section id by replacing spaces/dots with hyphens, and stripping 'class ' prefix
+        raw_name = fn["name"].split(",")[0].strip()
+        if raw_name.startswith("class "):
+            raw_name = raw_name[6:]
+        clean_id = re.sub(r"[^a-zA-Z0-9_-]", "-", raw_name)
+        section_id = f"fn-{clean_id}"
+
         source_sections.append(
             _render_code_section(
-                section_id=f"fn-{fn['name'].split(',')[0].strip()}",
+                section_id=section_id,
                 section_numeral=to_roman(sec_num, upper=True),
                 section_name=fn["name"],
                 code_text=code,
@@ -674,9 +714,7 @@ def generate_algorithm_page(
         sec_num += 1
         start_line = _adjust_start_line(main_block["start_line"], comments, last_line)
         code = _extract_lines(main_source, start_line, main_block["end_line"])
-        notes = _build_margin_notes(
-            comments, start_line, main_block["end_line"]
-        )
+        notes = _build_margin_notes(comments, start_line, main_block["end_line"])
         source_sections.append(
             _render_code_section(
                 section_id="fn-__main__",
@@ -699,11 +737,11 @@ def generate_algorithm_page(
             test_sections: list[str] = []
             last_test_line = 1
             for tc_num, tc in enumerate(test_classes, 1):
-                start_line = _adjust_start_line(tc["start_line"], test_comments, last_test_line)
-                code = _extract_lines(tests_source, start_line, tc["end_line"])
-                notes = _build_margin_notes(
-                    test_comments, start_line, tc["end_line"]
+                start_line = _adjust_start_line(
+                    tc["start_line"], test_comments, last_test_line
                 )
+                code = _extract_lines(tests_source, start_line, tc["end_line"])
+                notes = _build_margin_notes(test_comments, start_line, tc["end_line"])
                 last_test_line = tc["end_line"] + 1
                 test_sections.append(
                     _render_code_section(

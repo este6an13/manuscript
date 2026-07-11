@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from linear_algebra.utils import t
 
 from collections import Counter
@@ -126,7 +128,7 @@ class DecisionTree:
     # note: we can see it's deterministic, not probabilistic, no gradient descent
     def _build_tree(self, X, y, depth=0):
         # recursion base case
-        f, g, h = self._stopping_coditions
+        f, g, h = self._stopping_conditions()
         if any([f(depth), g(y), h(y)]):
             return Node(value=self._top_class(y))
 
@@ -173,3 +175,23 @@ class DecisionTree:
             pred = self._predict_sample(x, self.root)
             preds.append(pred)
         return preds
+
+
+if __name__ == "__main__":
+    dt = DecisionTree()
+
+    # temperature (celsius), humidity (%)
+    X = [
+        [15, 40],
+        [20, 35],
+        [32, 85],
+        [35, 90],
+    ]
+
+    # play outside?
+    y = [1, 1, 0, 0]
+
+    dt.fit(X, y)
+
+    yy = dt.predict([[25, 30], [35, 55], [30, 60]])
+    print(yy)  # [1, 0, 0]

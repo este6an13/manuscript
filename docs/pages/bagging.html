@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bagging (Bootstrap Aggregating) — Manuscript</title>
+    <link rel="icon" type="image/png" href="../img/scroll.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/manuscript.css">
+    <script>
+        window.MANUSCRIPT_IMPORTS = {
+    "decision_tree": "decision_tree.html",
+    "DecisionTree": "decision_tree.html#fn-DecisionTree",
+    "linear_algebra": "linear_algebra.html",
+    "t": "linear_algebra.html#fn-t"
+};
+    </script>
+</head>
+<body class="manuscript-page">
+    <nav class="manuscript-nav">
+        <a href="../index.html" class="nav-home">📜 Manuscript</a>
+        <div class="nav-controls">
+            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+                <span class="theme-icon-light">☀️</span>
+                <span class="theme-icon-dark">🌙</span>
+            </button>
+        </div>
+    </nav>
+    <article class="codex">
+        <div class="codex-border codex-border-top"></div>
+        <header class="codex-header">
+            <div class="chapter-numeral">Chapter XI</div>
+            <h1 class="codex-title">Bagging (Bootstrap Aggregating)</h1>
+            <div class="codex-subtitle">Ensemble / ML</div>
+            <div class="ornamental-rule">❦ ❦ ❦</div>
+        </header>
+
+        <section class="codex-chapter" id="source">
+            <h2 class="chapter-heading">The Source</h2>
+
+            <section class="codex-section" id="fn-bootstrap">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ I</span>
+                    <span class="section-name">bootstrap</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-bootstrap"># X : population; k : sample size
+def bootstrap(X, k):
+    return choices(X, k=k)  # &quot;choices&quot; for sampling with replacement
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-bootstrap">
+                        <div class="margin-note" data-line="1" data-absolute-line="8">
+                            <span class="note-line-ref">l.8</span>
+                            <span class="note-text">X : population; k : sample size</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="10">
+                            <span class="note-line-ref">l.10</span>
+                            <span class="note-text">&quot;choices&quot; for sampling with replacement</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-repeat_bootstrap">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ II</span>
+                    <span class="section-name">repeat_bootstrap</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-repeat_bootstrap"># repeat bootstrap sampling n times
+def repeat_bootstrap(X, k, n):
+    reps = []
+    for _ in range(n):
+        reps.append(bootstrap(X, k=k))
+    return reps
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-repeat_bootstrap">
+                        <div class="margin-note" data-line="1" data-absolute-line="13">
+                            <span class="note-line-ref">l.13</span>
+                            <span class="note-text">repeat bootstrap sampling n times</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-deepen">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ III</span>
+                    <span class="section-name">deepen</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-deepen"># [1, 1, 1] -&gt; [[1], [1], [1]]
+def deepen(y):  # to me it feels like go deeper, so I chose this name
+    res = []
+    for yy in y:
+        res.append([yy])
+    return res
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-deepen">
+                        <div class="margin-note" data-line="1" data-absolute-line="21">
+                            <span class="note-line-ref">l.21</span>
+                            <span class="note-text">[1, 1, 1] -&gt; [[1], [1], [1]]</span>
+                        </div>
+                        <div class="margin-note" data-line="2" data-absolute-line="22">
+                            <span class="note-line-ref">l.22</span>
+                            <span class="note-text">to me it feels like go deeper, so I chose this name</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-ascend">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IV</span>
+                    <span class="section-name">ascend</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-ascend"># [[1], [1], [1]] -&gt; [1, 1, 1]
+def ascend(y):  # just the opposite of deepen
+    res = []
+    for yy in y:
+        res.append(yy[0])
+    return res
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-ascend">
+                        <div class="margin-note" data-line="1" data-absolute-line="29">
+                            <span class="note-line-ref">l.29</span>
+                            <span class="note-text">[[1], [1], [1]] -&gt; [1, 1, 1]</span>
+                        </div>
+                        <div class="margin-note" data-line="2" data-absolute-line="30">
+                            <span class="note-line-ref">l.30</span>
+                            <span class="note-text">just the opposite of deepen</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-concat">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ V</span>
+                    <span class="section-name">concat</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-concat">def concat(A, B):
+    M = len(A)
+    N = len(B)
+    if M != N:
+        raise ValueError(&quot;A and B must be the same size&quot;)
+    AB = [0 for _ in range(M)]
+    for i in range(M):
+        AB[i] = A[i] + B[i]
+    return AB
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-most_frequent">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VI</span>
+                    <span class="section-name">most_frequent</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-most_frequent">def most_frequent(y) -&gt; int:
+    # sorting to deterministically pick lowest class if ties
+    return Counter(sorted(y)).most_common(1)[0][0]
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-most_frequent">
+                        <div class="margin-note" data-line="2" data-absolute-line="49">
+                            <span class="note-line-ref">l.49</span>
+                            <span class="note-text">sorting to deterministically pick lowest class if ties</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-split">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VII</span>
+                    <span class="section-name">split</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-split">def split(AB, idx):
+    A = []
+    B = []
+    for ab in AB:
+        A.append(ab[:idx])
+        B.append(ab[idx:])
+    return A, B
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-Bagging">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ VIII</span>
+                    <span class="section-name">class Bagging</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-Bagging">class Bagging:
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-Bagging-__init__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ IX</span>
+                    <span class="section-name">Bagging.__init__</span>
+                </h3>
+                <div class="section-content">
+                    <pre class="code-block"><code class="language-python" data-section="fn-Bagging-__init__">    def __init__(self, k, n):
+        self.k = k
+        self.n = n
+        self.trees = [DecisionTree() for _ in range(n)]
+</code></pre>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-Bagging-fit">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ X</span>
+                    <span class="section-name">Bagging.fit</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-Bagging-fit">    def fit(self, X, y):
+        idx = len(X[0])  # f: features
+        Xy = concat(X, deepen(y))  # concat for convenience, sampling over 1 population
+        reps = repeat_bootstrap(Xy, self.k, self.n)
+        for i in range(self.n):
+            X, y = split(reps[i], idx)  # idx is f + 1 - 1 = f
+            self.trees[i].fit(X, ascend(y))
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-Bagging-fit">
+                        <div class="margin-note" data-line="2" data-absolute-line="69">
+                            <span class="note-line-ref">l.69</span>
+                            <span class="note-text">f: features</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="70">
+                            <span class="note-line-ref">l.70</span>
+                            <span class="note-text">concat for convenience, sampling over 1 population</span>
+                        </div>
+                        <div class="margin-note" data-line="6" data-absolute-line="73">
+                            <span class="note-line-ref">l.73</span>
+                            <span class="note-text">idx is f + 1 - 1 = f</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-Bagging-predict">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ XI</span>
+                    <span class="section-name">Bagging.predict</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-Bagging-predict">    def predict(self, X):
+        # z : array: each element is preds of a tree
+        # zz : one element of z: preds of a tree
+        # tz : transposed z, each element is preds of a sample accross trees
+        # tzz: one element of tz: preds of a sample accorss trees
+        # y : final preds after voting: each element is the pred of a single sample
+        # yy : one element of y: the pred of a single sample
+        y = []
+        z = []
+        for i in range(self.n):
+            zz = self.trees[i].predict(X)
+            z.append(zz)
+
+        # votings
+        tz = t(z)  # transpose to iterate column-wise
+        for tzz in tz:
+            yy = most_frequent(tzz)
+            y.append(yy)
+        return y
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-Bagging-predict">
+                        <div class="margin-note" data-line="2" data-absolute-line="77">
+                            <span class="note-line-ref">l.77</span>
+                            <span class="note-text">z : array: each element is preds of a tree</span>
+                        </div>
+                        <div class="margin-note" data-line="3" data-absolute-line="78">
+                            <span class="note-line-ref">l.78</span>
+                            <span class="note-text">zz : one element of z: preds of a tree</span>
+                        </div>
+                        <div class="margin-note" data-line="4" data-absolute-line="79">
+                            <span class="note-line-ref">l.79</span>
+                            <span class="note-text">tz : transposed z, each element is preds of a sample accross trees</span>
+                        </div>
+                        <div class="margin-note" data-line="5" data-absolute-line="80">
+                            <span class="note-line-ref">l.80</span>
+                            <span class="note-text">tzz: one element of tz: preds of a sample accorss trees</span>
+                        </div>
+                        <div class="margin-note" data-line="6" data-absolute-line="81">
+                            <span class="note-line-ref">l.81</span>
+                            <span class="note-text">y : final preds after voting: each element is the pred of a single sample</span>
+                        </div>
+                        <div class="margin-note" data-line="7" data-absolute-line="82">
+                            <span class="note-line-ref">l.82</span>
+                            <span class="note-text">yy : one element of y: the pred of a single sample</span>
+                        </div>
+                        <div class="margin-note" data-line="14" data-absolute-line="89">
+                            <span class="note-line-ref">l.89</span>
+                            <span class="note-text">votings</span>
+                        </div>
+                        <div class="margin-note" data-line="15" data-absolute-line="90">
+                            <span class="note-line-ref">l.90</span>
+                            <span class="note-text">transpose to iterate column-wise</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="codex-section" id="fn-__main__">
+                <h3 class="section-heading">
+                    <span class="section-numeral">§ XII</span>
+                    <span class="section-name">Demonstration</span>
+                </h3>
+                <div class="section-content has-notes">
+                    <pre class="code-block"><code class="language-python" data-section="fn-__main__">if __name__ == &quot;__main__&quot;:
+    bagging = Bagging(k=4, n=5)
+
+    # temperature (celsius), humidity (%)
+    X = [
+        [15, 40],
+        [20, 35],
+        [32, 85],
+        [35, 90],
+    ]
+
+    # play outside?
+    y = [1, 1, 0, 0]
+
+    bagging.fit(X, y)
+
+    yy = bagging.predict([[25, 30], [35, 55], [30, 60]])
+    print(yy)  # [1, 0, 0]
+</code></pre>
+                    <aside class="margin-notes" data-section="fn-__main__">
+                        <div class="margin-note" data-line="4" data-absolute-line="100">
+                            <span class="note-line-ref">l.100</span>
+                            <span class="note-text">temperature (celsius), humidity (%)</span>
+                        </div>
+                        <div class="margin-note" data-line="12" data-absolute-line="108">
+                            <span class="note-line-ref">l.108</span>
+                            <span class="note-text">play outside?</span>
+                        </div>
+                        <div class="margin-note" data-line="18" data-absolute-line="114">
+                            <span class="note-line-ref">l.114</span>
+                            <span class="note-text">[1, 0, 0]</span>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+        </section>
+
+        <footer class="codex-footer">
+            <div class="ornamental-rule">❦</div>
+            <span class="page-number">— xi —</span>
+        </footer>
+        <div class="codex-border codex-border-bottom"></div>
+    </article>
+    <div class="site-copyright">&copy; 2026 Diego Esteban</div>
+    <script src="../js/manuscript.js"></script>
+</body>
+</html>

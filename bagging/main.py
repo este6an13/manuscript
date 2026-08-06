@@ -1,15 +1,20 @@
 from collections import Counter
-from random import sample
+from random import choices
 
 from decision_tree.main import DecisionTree
 from linear_algebra.utils import t
 
 
-# X : population; k : sample size; n : repetitions
-def bootstrap(X, k, n):
+# X : population; k : sample size
+def bootstrap(X, k):
+    return choices(X, k=k)  # "choices" for sampling with replacement
+
+
+# repeat bootstrap sampling n times
+def repeat_bootstrap(X, k, n):
     reps = []
     for _ in range(n):
-        reps.append(sample(X, k=k))
+        reps.append(bootstrap(X, k=k))
     return reps
 
 
@@ -22,7 +27,7 @@ def deepen(y):  # to me it feels like go deeper, so I chose this name
 
 
 # [[1], [1], [1]] -> [1, 1, 1]
-def ascend(y):  # just an anotnym of deepen
+def ascend(y):  # just the opposite of deepen
     res = []
     for yy in y:
         res.append(yy[0])
@@ -41,7 +46,8 @@ def concat(A, B):
 
 
 def most_frequent(y) -> int:
-    return Counter(y).most_common(1)[0][0]
+    # sorting to deterministically pick lowest class if ties
+    return Counter(sorted(y)).most_common(1)[0][0]
 
 
 def split(AB, idx):
@@ -61,34 +67,35 @@ class Bagging:
 
     def fit(self, X, y):
         idx = len(X[0])  # f: features
-        Xy = concat(X, deepen(y))
-        reps = bootstrap(Xy, self.k, self.n)
+        Xy = concat(X, deepen(y))  # concat for convenience, sampling over 1 population
+        reps = repeat_bootstrap(Xy, self.k, self.n)
         for i in range(self.n):
             X, y = split(reps[i], idx)  # idx is f + 1 - 1 = f
             self.trees[i].fit(X, ascend(y))
 
     def predict(self, X):
-        # y : final preds array, after voting
-        # yy : individual pred in preds array
-        # Y : array of preds arrays
-        # YY : individual preds array, outcome of one tree
-        # tY : array of preds transposed
-        # tYY: column of Y; all trees preds for a given sample
+        # z : array: each element is preds of a tree
+        # zz : one element of z: preds of a tree
+        # tz : transposed z, each element is preds of a sample accross trees
+        # tzz: one element of tz: preds of a sample accorss trees
+        # y : final preds after voting: each element is the pred of a single sample
+        # yy : one element of y: the pred of a single sample
         y = []
-        Y = []
+        z = []
         for i in range(self.n):
-            YY = self.trees[i].predict(X)
-            Y.append(YY)
-        # voting
-        tY = t(Y)  # transpose to iterate column-wise
-        for tYY in tY:
-            yy = most_frequent(tYY)
+            zz = self.trees[i].predict(X)
+            z.append(zz)
+
+        # votings
+        tz = t(z)  # transpose to iterate column-wise
+        for tzz in tz:
+            yy = most_frequent(tzz)
             y.append(yy)
         return y
 
 
 if __name__ == "__main__":
-    bagging = Bagging(k=3, n=5)
+    bagging = Bagging(k=4, n=5)
 
     # temperature (celsius), humidity (%)
     X = [

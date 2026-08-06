@@ -27,6 +27,8 @@ Here is the current index of implemented algorithms and concepts:
 | **NLP / Tokenization** | **N-gram Tokenization** | Character-level and word-level N-gram generator to split text into sequence patterns of length N. | [`/ngram-tokenization`](./ngram-tokenization) |
 | **Optimization / ML** | **Gradient Descent** | First-principles multi-variable gradient descent optimizer using custom linear algebra and geometry utilities. | [`/gradient_descent`](./gradient_descent) |
 | **Geometry** | **Geometry Utilities** | Basic geometric calculations, including element-wise Euclidean distance for arbitrary dimensions, implemented from scratch. | [`/geometry`](./geometry) |
+| **Classification / ML** | **Decision Tree** | Recursive, greedy tree-based classifier that splits data on features to minimize impurity, predicting via majority class at each leaf. | [`/decision_tree`](./decision_tree) |
+| **Ensemble / ML** | **Bagging (Bootstrap Aggregating)** | Ensemble method that trains multiple decision trees on bootstrap-resampled data and aggregates their predictions via majority vote, reducing variance. | [`/bagging`](./bagging) |
 
 ---
 

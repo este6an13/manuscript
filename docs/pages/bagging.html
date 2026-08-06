@@ -11,6 +11,11 @@
     <link rel="stylesheet" href="../css/manuscript.css">
     <script>
         window.MANUSCRIPT_IMPORTS = {
+    "arrays": "arrays.html",
+    "ascend": "arrays.html#fn-ascend",
+    "concat": "arrays.html#fn-concat",
+    "deepen": "arrays.html#fn-deepen",
+    "split": "arrays.html#fn-split",
     "decision_tree": "decision_tree.html",
     "DecisionTree": "decision_tree.html#fn-DecisionTree",
     "linear_algebra": "linear_algebra.html",
@@ -51,12 +56,12 @@ def bootstrap(X, k):
     return choices(X, k=k)  # &quot;choices&quot; for sampling with replacement
 </code></pre>
                     <aside class="margin-notes" data-section="fn-bootstrap">
-                        <div class="margin-note" data-line="1" data-absolute-line="8">
-                            <span class="note-line-ref">l.8</span>
+                        <div class="margin-note" data-line="1" data-absolute-line="9">
+                            <span class="note-line-ref">l.9</span>
                             <span class="note-text">X : population; k : sample size</span>
                         </div>
-                        <div class="margin-note" data-line="3" data-absolute-line="10">
-                            <span class="note-line-ref">l.10</span>
+                        <div class="margin-note" data-line="3" data-absolute-line="11">
+                            <span class="note-line-ref">l.11</span>
                             <span class="note-text">&quot;choices&quot; for sampling with replacement</span>
                         </div>
                     </aside>
@@ -77,88 +82,17 @@ def repeat_bootstrap(X, k, n):
     return reps
 </code></pre>
                     <aside class="margin-notes" data-section="fn-repeat_bootstrap">
-                        <div class="margin-note" data-line="1" data-absolute-line="13">
-                            <span class="note-line-ref">l.13</span>
+                        <div class="margin-note" data-line="1" data-absolute-line="14">
+                            <span class="note-line-ref">l.14</span>
                             <span class="note-text">repeat bootstrap sampling n times</span>
                         </div>
                     </aside>
                 </div>
             </section>
 
-            <section class="codex-section" id="fn-deepen">
-                <h3 class="section-heading">
-                    <span class="section-numeral">§ III</span>
-                    <span class="section-name">deepen</span>
-                </h3>
-                <div class="section-content has-notes">
-                    <pre class="code-block"><code class="language-python" data-section="fn-deepen"># [1, 1, 1] -&gt; [[1], [1], [1]]
-def deepen(y):  # to me it feels like go deeper, so I chose this name
-    res = []
-    for yy in y:
-        res.append([yy])
-    return res
-</code></pre>
-                    <aside class="margin-notes" data-section="fn-deepen">
-                        <div class="margin-note" data-line="1" data-absolute-line="21">
-                            <span class="note-line-ref">l.21</span>
-                            <span class="note-text">[1, 1, 1] -&gt; [[1], [1], [1]]</span>
-                        </div>
-                        <div class="margin-note" data-line="2" data-absolute-line="22">
-                            <span class="note-line-ref">l.22</span>
-                            <span class="note-text">to me it feels like go deeper, so I chose this name</span>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-
-            <section class="codex-section" id="fn-ascend">
-                <h3 class="section-heading">
-                    <span class="section-numeral">§ IV</span>
-                    <span class="section-name">ascend</span>
-                </h3>
-                <div class="section-content has-notes">
-                    <pre class="code-block"><code class="language-python" data-section="fn-ascend"># [[1], [1], [1]] -&gt; [1, 1, 1]
-def ascend(y):  # just the opposite of deepen
-    res = []
-    for yy in y:
-        res.append(yy[0])
-    return res
-</code></pre>
-                    <aside class="margin-notes" data-section="fn-ascend">
-                        <div class="margin-note" data-line="1" data-absolute-line="29">
-                            <span class="note-line-ref">l.29</span>
-                            <span class="note-text">[[1], [1], [1]] -&gt; [1, 1, 1]</span>
-                        </div>
-                        <div class="margin-note" data-line="2" data-absolute-line="30">
-                            <span class="note-line-ref">l.30</span>
-                            <span class="note-text">just the opposite of deepen</span>
-                        </div>
-                    </aside>
-                </div>
-            </section>
-
-            <section class="codex-section" id="fn-concat">
-                <h3 class="section-heading">
-                    <span class="section-numeral">§ V</span>
-                    <span class="section-name">concat</span>
-                </h3>
-                <div class="section-content">
-                    <pre class="code-block"><code class="language-python" data-section="fn-concat">def concat(A, B):
-    M = len(A)
-    N = len(B)
-    if M != N:
-        raise ValueError(&quot;A and B must be the same size&quot;)
-    AB = [0 for _ in range(M)]
-    for i in range(M):
-        AB[i] = A[i] + B[i]
-    return AB
-</code></pre>
-                </div>
-            </section>
-
             <section class="codex-section" id="fn-most_frequent">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ VI</span>
+                    <span class="section-numeral">§ III</span>
                     <span class="section-name">most_frequent</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -167,34 +101,17 @@ def ascend(y):  # just the opposite of deepen
     return Counter(sorted(y)).most_common(1)[0][0]
 </code></pre>
                     <aside class="margin-notes" data-section="fn-most_frequent">
-                        <div class="margin-note" data-line="2" data-absolute-line="49">
-                            <span class="note-line-ref">l.49</span>
+                        <div class="margin-note" data-line="2" data-absolute-line="23">
+                            <span class="note-line-ref">l.23</span>
                             <span class="note-text">sorting to deterministically pick lowest class if ties</span>
                         </div>
                     </aside>
                 </div>
             </section>
 
-            <section class="codex-section" id="fn-split">
-                <h3 class="section-heading">
-                    <span class="section-numeral">§ VII</span>
-                    <span class="section-name">split</span>
-                </h3>
-                <div class="section-content">
-                    <pre class="code-block"><code class="language-python" data-section="fn-split">def split(AB, idx):
-    A = []
-    B = []
-    for ab in AB:
-        A.append(ab[:idx])
-        B.append(ab[idx:])
-    return A, B
-</code></pre>
-                </div>
-            </section>
-
             <section class="codex-section" id="fn-Bagging">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ VIII</span>
+                    <span class="section-numeral">§ IV</span>
                     <span class="section-name">class Bagging</span>
                 </h3>
                 <div class="section-content">
@@ -205,7 +122,7 @@ def ascend(y):  # just the opposite of deepen
 
             <section class="codex-section" id="fn-Bagging-__init__">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ IX</span>
+                    <span class="section-numeral">§ V</span>
                     <span class="section-name">Bagging.__init__</span>
                 </h3>
                 <div class="section-content">
@@ -219,7 +136,7 @@ def ascend(y):  # just the opposite of deepen
 
             <section class="codex-section" id="fn-Bagging-fit">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ X</span>
+                    <span class="section-numeral">§ VI</span>
                     <span class="section-name">Bagging.fit</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -232,16 +149,16 @@ def ascend(y):  # just the opposite of deepen
             self.trees[i].fit(X, ascend(y))
 </code></pre>
                     <aside class="margin-notes" data-section="fn-Bagging-fit">
-                        <div class="margin-note" data-line="2" data-absolute-line="69">
-                            <span class="note-line-ref">l.69</span>
+                        <div class="margin-note" data-line="2" data-absolute-line="34">
+                            <span class="note-line-ref">l.34</span>
                             <span class="note-text">f: features</span>
                         </div>
-                        <div class="margin-note" data-line="3" data-absolute-line="70">
-                            <span class="note-line-ref">l.70</span>
+                        <div class="margin-note" data-line="3" data-absolute-line="35">
+                            <span class="note-line-ref">l.35</span>
                             <span class="note-text">concat for convenience, sampling over 1 population</span>
                         </div>
-                        <div class="margin-note" data-line="6" data-absolute-line="73">
-                            <span class="note-line-ref">l.73</span>
+                        <div class="margin-note" data-line="6" data-absolute-line="38">
+                            <span class="note-line-ref">l.38</span>
                             <span class="note-text">idx is f + 1 - 1 = f</span>
                         </div>
                     </aside>
@@ -250,7 +167,7 @@ def ascend(y):  # just the opposite of deepen
 
             <section class="codex-section" id="fn-Bagging-predict">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ XI</span>
+                    <span class="section-numeral">§ VII</span>
                     <span class="section-name">Bagging.predict</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -275,36 +192,36 @@ def ascend(y):  # just the opposite of deepen
         return y
 </code></pre>
                     <aside class="margin-notes" data-section="fn-Bagging-predict">
-                        <div class="margin-note" data-line="2" data-absolute-line="77">
-                            <span class="note-line-ref">l.77</span>
+                        <div class="margin-note" data-line="2" data-absolute-line="42">
+                            <span class="note-line-ref">l.42</span>
                             <span class="note-text">z : array: each element is preds of a tree</span>
                         </div>
-                        <div class="margin-note" data-line="3" data-absolute-line="78">
-                            <span class="note-line-ref">l.78</span>
+                        <div class="margin-note" data-line="3" data-absolute-line="43">
+                            <span class="note-line-ref">l.43</span>
                             <span class="note-text">zz : one element of z: preds of a tree</span>
                         </div>
-                        <div class="margin-note" data-line="4" data-absolute-line="79">
-                            <span class="note-line-ref">l.79</span>
+                        <div class="margin-note" data-line="4" data-absolute-line="44">
+                            <span class="note-line-ref">l.44</span>
                             <span class="note-text">tz : transposed z, each element is preds of a sample accross trees</span>
                         </div>
-                        <div class="margin-note" data-line="5" data-absolute-line="80">
-                            <span class="note-line-ref">l.80</span>
+                        <div class="margin-note" data-line="5" data-absolute-line="45">
+                            <span class="note-line-ref">l.45</span>
                             <span class="note-text">tzz: one element of tz: preds of a sample accorss trees</span>
                         </div>
-                        <div class="margin-note" data-line="6" data-absolute-line="81">
-                            <span class="note-line-ref">l.81</span>
+                        <div class="margin-note" data-line="6" data-absolute-line="46">
+                            <span class="note-line-ref">l.46</span>
                             <span class="note-text">y : final preds after voting: each element is the pred of a single sample</span>
                         </div>
-                        <div class="margin-note" data-line="7" data-absolute-line="82">
-                            <span class="note-line-ref">l.82</span>
+                        <div class="margin-note" data-line="7" data-absolute-line="47">
+                            <span class="note-line-ref">l.47</span>
                             <span class="note-text">yy : one element of y: the pred of a single sample</span>
                         </div>
-                        <div class="margin-note" data-line="14" data-absolute-line="89">
-                            <span class="note-line-ref">l.89</span>
+                        <div class="margin-note" data-line="14" data-absolute-line="54">
+                            <span class="note-line-ref">l.54</span>
                             <span class="note-text">votings</span>
                         </div>
-                        <div class="margin-note" data-line="15" data-absolute-line="90">
-                            <span class="note-line-ref">l.90</span>
+                        <div class="margin-note" data-line="15" data-absolute-line="55">
+                            <span class="note-line-ref">l.55</span>
                             <span class="note-text">transpose to iterate column-wise</span>
                         </div>
                     </aside>
@@ -313,7 +230,7 @@ def ascend(y):  # just the opposite of deepen
 
             <section class="codex-section" id="fn-__main__">
                 <h3 class="section-heading">
-                    <span class="section-numeral">§ XII</span>
+                    <span class="section-numeral">§ VIII</span>
                     <span class="section-name">Demonstration</span>
                 </h3>
                 <div class="section-content has-notes">
@@ -337,16 +254,16 @@ def ascend(y):  # just the opposite of deepen
     print(yy)  # [1, 0, 0]
 </code></pre>
                     <aside class="margin-notes" data-section="fn-__main__">
-                        <div class="margin-note" data-line="4" data-absolute-line="100">
-                            <span class="note-line-ref">l.100</span>
+                        <div class="margin-note" data-line="4" data-absolute-line="65">
+                            <span class="note-line-ref">l.65</span>
                             <span class="note-text">temperature (celsius), humidity (%)</span>
                         </div>
-                        <div class="margin-note" data-line="12" data-absolute-line="108">
-                            <span class="note-line-ref">l.108</span>
+                        <div class="margin-note" data-line="12" data-absolute-line="73">
+                            <span class="note-line-ref">l.73</span>
                             <span class="note-text">play outside?</span>
                         </div>
-                        <div class="margin-note" data-line="18" data-absolute-line="114">
-                            <span class="note-line-ref">l.114</span>
+                        <div class="margin-note" data-line="18" data-absolute-line="79">
+                            <span class="note-line-ref">l.79</span>
                             <span class="note-text">[1, 0, 0]</span>
                         </div>
                     </aside>

@@ -1,15 +1,16 @@
 from __future__ import annotations
 
-from linear_algebra.utils import t
-
 from collections import Counter
+from random import sample
+
+from linear_algebra.utils import t
 
 
 class Node:
     def __init__(
         self,
-        left: "Node" | None = None,
-        right: "Node" | None = None,
+        left: Node | None = None,
+        right: Node | None = None,
         threshold: float | None = None,
         feature: int | None = None,
         value: float | None = None,
@@ -50,7 +51,7 @@ class DecisionTree:
             frequencies[yy] = 1 if yy not in frequencies else frequencies[yy] + 1
 
         proportions = {}
-        for yy in frequencies:
+        for yy in frequencies:  # noqa: PLC0206
             proportions[yy] = frequencies[yy] / n
 
         G = 1 - sum([p**2 for p in proportions.values()])
@@ -63,15 +64,26 @@ class DecisionTree:
         return sum([w * v for w, v in zip(weights, values)]) / N
 
     # finds the threshold and feature (column) that decides where to split
-    def __best_split(self, X, y):
+    def _best_split(self, X, y, m=None):
         best_gini = 1.0
         best_feature = None  # idx of the feature
         best_threshold = None  # picked threshold: feature value
 
         Xt = t(X)  # columns are rows now for easier iteration
 
+        features_idxs = range(len(Xt))
+
+        # if m is specified, we sample m columns/features
+        # we work with indexes to not alter original Xt, and to not complicate loop logic
+        if m:
+            c = len(Xt)  # number of columns/features
+            features_idxs = sample(features_idxs, k=min(m, c))
+
         # we iterate over each feature (column)
         for idx, feature_column in enumerate(Xt):
+            if idx not in features_idxs:  # by default (no sampling) all cols included
+                # check above may not be optimal but makes it simpler and easy to understand
+                continue
             # feature_value_i is our threshold in this iteration
             for feature_value_i in feature_column:
                 # our split
@@ -119,20 +131,22 @@ class DecisionTree:
 
     # helper to organize stopping conditions: used by _build_tree (fitting/training procedure)
     def _stopping_conditions(self):
-        f = lambda depth: self.max_depth is not None and depth >= self.max_depth  # noqa: E731
-        g = lambda y: len(y) < self.min_samples_split  # noqa: E731
-        h = lambda y: self._gini(y) == 00  # noqa: E731
+        f = lambda depth: self.max_depth is not None and depth >= self.max_depth
+        g = lambda y: len(y) < self.min_samples_split
+        h = lambda y: self._gini(y) == 00
         return f, g, h
 
     # constructs the tree recursively: this is the fitting/training procedure
     # note: we can see it's deterministic, not probabilistic, no gradient descent
-    def _build_tree(self, X, y, depth=0):
+    # except if m is specified: then a random number of features is sampled at every node
+    # when constructing (fitting) the tree: this param is passed when DT is part of a random forest ensemble
+    def _build_tree(self, X, y, depth=0, m=None):
         # recursion base case
         f, g, h = self._stopping_conditions()
         if any([f(depth), g(y), h(y)]):
             return Node(value=self._top_class(y))
 
-        best_threshold, best_feature = self.__best_split(X, y)
+        best_threshold, best_feature = self._best_split(X, y, m)
         if best_threshold is None or best_feature is None:
             return Node(value=self._top_class(y))
 
@@ -140,8 +154,8 @@ class DecisionTree:
             X, y, best_threshold, best_feature
         )
 
-        left_child = self._build_tree(left_X, left_y, depth + 1)
-        right_child = self._build_tree(right_X, right_y, depth + 1)
+        left_child = self._build_tree(left_X, left_y, depth + 1, m)
+        right_child = self._build_tree(right_X, right_y, depth + 1, m)
 
         return Node(
             left=left_child,
@@ -151,8 +165,9 @@ class DecisionTree:
         )
 
     # the fitting is just building our tree from our samples and gini metric results
-    def fit(self, X, y):
-        self.root = self._build_tree(X, y)
+    # m: feature subsample size is passed when DT is part of a random forest ensemble
+    def fit(self, X, y, m=None):
+        self.root = self._build_tree(X, y, m=m)
         return self
 
     # traverse the tree recursively to predict the class of a sample: the leaf value (class) is the predicted value
@@ -192,6 +207,11 @@ if __name__ == "__main__":
     y = [1, 1, 0, 0]
 
     dt.fit(X, y)
+
+    yy = dt.predict([[25, 30], [35, 55], [30, 60]])
+    print(yy)  # [1, 0, 0]
+
+    dt.fit(X, y, m=3)  # m is passed when fitting from a random forest ensemble
 
     yy = dt.predict([[25, 30], [35, 55], [30, 60]])
     print(yy)  # [1, 0, 0]
